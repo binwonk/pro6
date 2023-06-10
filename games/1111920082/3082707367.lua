@@ -19,7 +19,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 -- LOCAL VARIABLES HERE
 local Player = Players.LocalPlayer
 local Modules = ReplicatedStorage.Modules
-local Remote = Modules:FindFirstChild("Network"):FindFirstChild("RemoteEvent")
+local Remote = Modules:WaitForChild("Network"):WaitForChild("RemoteEvent")
 
 local ChaosFunctions = loadstring(game:HttpGet("https://raw.githubusercontent.com/binwonk/pro6/main/misc/ChaosFunctions2.lua"))()
 
@@ -44,10 +44,10 @@ Options.KillPlayer:OnChanged(function(value)
 				[1] = "HandleDamage",
 				[2] = {
 					["Character"] = KillPlayer.Character,
-					["Hit"] = KillPlayer.Character:FindFirstChild("Head"),
+					["Hit"] = KillPlayer.Character.LeftHand,
 					["Type"] = "Normal",
-					["Norm"] = Vector3.new(0, 0, 0),
-					["Pos"] = Vector3.new(0, 0, 0),
+					["Norm"] = Vector3.new(0.7755845785140991, 0.035323500633239746, -0.6302545070648193),
+					["Pos"] = Vector3.new(-731.4620971679688, -108.57284545898438, -495.60650634765625),
 					["SpellName"] = "stupefy"
 				}
 			}
