@@ -17,11 +17,41 @@ local TeleportService = game:GetService("TeleportService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- LOCAL VARIABLES HERE
+local ROWizardValues = {
+    ["ModWandToggle"] = false,
+    ["ModWandSpoofs"] = {}
+}
+
 local Player = Players.LocalPlayer
 local Modules = ReplicatedStorage:WaitForChild("Modules")
+local Spells = require(Modules:WaitForChild("Spells"))
 local Remote = Modules:WaitForChild("Network"):WaitForChild("RemoteEvent")
 
 local ChaosFunctions = loadstring(game:HttpGet("https://raw.githubusercontent.com/binwonk/pro6/main/misc/ChaosFunctions2.lua"))()
+
+local oldnindspells;
+local oldindspells;
+oldnindspells = hookmetamethod(Spells.Spells,"__newindex",function(self,...)
+    local args = {...}
+
+    if not checkcaller() and ROWizardValues["ModWandToggle"] then
+        ROWizardValues["ModWandSpoofs"][args[1]] = args[2]
+        return
+    end
+
+    return oldnindspells(self,...)
+end)
+oldindspells = hookmetamethod(Spells.Spells,"__index",function(self,...)
+    local args = {...}
+
+    if not checkcaller() and ROWizardValues["ModWandToggle"] then
+        if ROWizardValues["ModWandSpoofs"][args[1]] then
+            return ROWizardValues["ModWandSpoofs"][args[1]]
+        end
+    end
+
+    return oldindspells(self,...)
+end)
 
 --GAME SCRIPT HERE
 local Combat = Tabs.Game:AddLeftGroupbox("Combat")
@@ -39,9 +69,6 @@ Options.KillPlayer:OnChanged(function(value)
         return
     end
 	local KillPlayer = ChaosFunctions.stringToPlayer(value)
-    if KillPlayer.Character then
-        print("hi XD")
-    end
 	if KillPlayer.Character and KillPlayer.Character:FindFirstChild("Head") then
 		for i = 1, 6 do
 			local args = {
@@ -58,4 +85,23 @@ Options.KillPlayer:OnChanged(function(value)
 			Remote:FireServer(unpack(args))
 		end
 	end
+end)
+
+Combat:AddToggle("ModWand", {
+    Text = "Mod Wand",
+    Default = false
+})
+
+Toggles.ModWand:OnChanged(function(value)
+    if value then
+        for i,v in pairs(Spells.Spells) do
+			v.MaxCharges = 10000
+			v.Charges = 10000
+			v.Range = 10000
+			v.Safe = true
+			v.ChargeCooldown = 0.01
+			v.Cooldown = 0
+		end
+    end
+    ROWizardValues["ModWandToggle"] = value
 end)
