@@ -19,6 +19,8 @@ local Player = Players.LocalPlayer
 local Modules = ReplicatedStorage.Modules
 local Remote = Modules:FindFirstChild("Network"):FindFirstChild("RemoteEvent")
 
+local ChaosFunctions = loadstring(game:HttpGet("https://raw.githubusercontent.com/binwonk/pro6/main/misc/ChaosFunctions2.lua"))()
+
 --GAME SCRIPT HERE
 local Combat = Tabs.Game:AddLeftGroupbox("Combat")
 
