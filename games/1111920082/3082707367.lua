@@ -15,11 +15,11 @@ local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local TeleportService = game:GetService("TeleportService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 -- LOCAL VARIABLES HERE
 local ROWizardValues = {
-    ["ModWandToggle"] = false,
-    ["ModWandSpoofs"] = {}
+    ["ModWandToggle"] = false
 }
 
 local Player = Players.LocalPlayer
@@ -28,30 +28,6 @@ local Spells = require(Modules:WaitForChild("Spell"))
 local Remote = Modules:WaitForChild("Network"):WaitForChild("RemoteEvent")
 
 local ChaosFunctions = loadstring(game:HttpGet("https://raw.githubusercontent.com/binwonk/pro6/main/misc/ChaosFunctions2.lua"))()
-
-local oldnindspells;
-local oldindspells;
-oldnindspells = hookmetamethod(Spells.Spells,"__newindex",function(self,...)
-    local args = {...}
-
-    if not checkcaller() and ROWizardValues["ModWandToggle"] then
-        ROWizardValues["ModWandSpoofs"][args[1]] = args[2]
-        return
-    end
-
-    return oldnindspells(self,...)
-end)
-oldindspells = hookmetamethod(Spells.Spells,"__index",function(self,...)
-    local args = {...}
-
-    if not checkcaller() and ROWizardValues["ModWandToggle"] then
-        if ROWizardValues["ModWandSpoofs"][args[1]] then
-            return ROWizardValues["ModWandSpoofs"][args[1]]
-        end
-    end
-
-    return oldindspells(self,...)
-end)
 
 --GAME SCRIPT HERE
 local Combat = Tabs.Game:AddLeftGroupbox("Combat")
@@ -92,9 +68,19 @@ Combat:AddToggle("ModWand", {
     Default = false
 })
 
+local ModWandConnection = nil;
+local ModWandTable = {}
+
 Toggles.ModWand:OnChanged(function(value)
     if value then
-        for i,v in pairs(Spells.Spells) do
+        ModWandTable = {}
+        for i,v in next,Spells.Spells do
+			ModWandTable[v] = {}
+            for x,d in next,v do
+                ModWandTable[v][x] = d
+            end
+		end
+        for i,v in next,Spells.Spells do
 			v.MaxCharges = 10000
 			v.Charges = 10000
 			v.Range = 10000
@@ -102,6 +88,31 @@ Toggles.ModWand:OnChanged(function(value)
 			v.ChargeCooldown = 0.01
 			v.Cooldown = 0
 		end
+        ModWandConnection = RunService.Stepped:Connect(function()
+            for i,v in next,Spells.Spells do
+				if v.MaxCharges < 100 then
+					v.MaxCharges = 10000
+				end
+				if v.Charges < 100 then
+					v.Charges = 10000
+				end
+				if v.Safe == false then
+					v.Safe = true
+				end
+				if v.Cooldown > 0 then
+					v.Cooldown = 0
+				end
+				if v.ChargeCooldown > 0.02 then
+					v.ChargeCooldown = 0.01
+				end
+			end
+        end)
+    else
+        if typeof(ModWandConnection) == "RBXScriptConnection" then
+            ModWandConnection:Disconnect()
+            for i,v in next,ModWandTable do
+                Spells.Spells = v
+            end
+        end
     end
-    ROWizardValues["ModWandToggle"] = value
 end)
