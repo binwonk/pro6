@@ -36,7 +36,7 @@ Combat:AddInput("KillPlayer", {
 
 Options.KillPlayer:OnChanged(function(value)
 	local KillPlayer = ChaosFunctions.stringToPlayer(value)
-    print(ChaosFunctions.checkType(KillPlayer))
+    print(tostring(ChaosFunctions.checkType(KillPlayer)))
 	print(tostring(KillPlayer:GetFullName()))
 	if KillPlayer.Character and KillPlayer:FindFirstChild("Head") then
 		for i = 1, 6 do
