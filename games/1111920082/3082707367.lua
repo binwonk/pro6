@@ -1,8 +1,3 @@
---[[
-	code generated using luamin.js, Herrtt#3868
---]]
-
-
 local StartTime = os.clock()
 
 local ScriptVersion = 1
@@ -41,18 +36,18 @@ Combat:AddInput("KillPlayer", {
 
 Options.KillPlayer:OnChanged(function(value)
 	local KillPlayer = ChaosFunctions.stringToPlayer(value)
-	print(tostring(KillPlayer))
+	print(tostring(KillPlayer:GetFullName()))
 	if KillPlayer.Character and KillPlayer:FindFirstChild("Head") then
 		for i = 1, 6 do
 			local args = {
 				[1] = "HandleDamage",
 				[2] = {
 					["Character"] = KillPlayer.Character,
-					Hit = KillPlayer.Character:FindFirstChild("Head"),
-					Type = "Normal",
-					Norm = Vector3.new(0, 0, 0),
-					Pos = Vector3.new(0, 0, 0),
-					SpellName = "stupefy"
+					["Hit"] = KillPlayer.Character:FindFirstChild("Head"),
+					["Type"] = "Normal",
+					["Norm"] = Vector3.new(0, 0, 0),
+					["Pos"] = Vector3.new(0, 0, 0),
+					["SpellName"] = "stupefy"
 				}
 			}
 			Remote:FireServer(unpack(args))
