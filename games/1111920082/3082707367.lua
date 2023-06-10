@@ -38,7 +38,7 @@ Options.KillPlayer:OnChanged(function(value)
 	local KillPlayer = ChaosFunctions.stringToPlayer(value)
     print(tostring(ChaosFunctions.checkType(KillPlayer)))
 	print(tostring(KillPlayer:GetFullName()))
-	if KillPlayer.Character and KillPlayer:FindFirstChild("Head") then
+	if KillPlayer.Character and KillPlayer.Character:FindFirstChild("LeftHand") then
 		for i = 1, 6 do
 			local args = {
 				[1] = "HandleDamage",
