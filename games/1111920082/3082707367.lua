@@ -24,7 +24,7 @@ local ROWizardValues = {
 
 local Player = Players.LocalPlayer
 local Modules = ReplicatedStorage:WaitForChild("Modules")
-local Spells = require(Modules:WaitForChild("Spells"))
+local Spells = require(Modules:WaitForChild("Spell"))
 local Remote = Modules:WaitForChild("Network"):WaitForChild("RemoteEvent")
 
 local ChaosFunctions = loadstring(game:HttpGet("https://raw.githubusercontent.com/binwonk/pro6/main/misc/ChaosFunctions2.lua"))()
