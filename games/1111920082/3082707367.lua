@@ -39,6 +39,9 @@ Options.KillPlayer:OnChanged(function(value)
     if KillPlayer.Character then
         print("hi XD")
     end
+    if Players[KillPlayer] then
+        print("CUH")
+    end
 	if KillPlayer.Character and KillPlayer.Character:FindFirstChild("Head") then
 		for i = 1, 6 do
 			local args = {
