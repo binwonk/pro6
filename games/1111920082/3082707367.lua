@@ -1,3 +1,8 @@
+--[[
+	code generated using luamin.js, Herrtt#3868
+--]]
+
+
 local StartTime = os.clock()
 
 local ScriptVersion = 1
@@ -5,7 +10,9 @@ local ScriptVersion = 1
 local game = game
 local wait = task.wait
 
-repeat wait() until game:IsLoaded()
+repeat
+	wait()
+until game:IsLoaded()
 
 
 -- SERVICES HERE
@@ -24,21 +31,31 @@ local ChaosFunctions = loadstring(game:HttpGet("https://raw.githubusercontent.co
 --GAME SCRIPT HERE
 local Combat = Tabs.Game:AddLeftGroupbox("Combat")
 
-Combat:AddInput("KillPlayer",{
-    Numeric = false,
-    Finished = true,
-    Text = "Kill Player",
-    Tooltip = "Kills a player!",
-    Placeholder = "Player name here!"
+Combat:AddInput("KillPlayer", {
+	Numeric = false,
+	Finished = true,
+	Text = "Kill Player",
+	Tooltip = "Kills a player!",
+	Placeholder = "Player name here!"
 })
 
 Options.KillPlayer:OnChanged(function(value)
-    local KillPlayer = ChaosFunctions.stringToPlayer(value)
-    print(tostring(KillPlayer))
-    if KillPlayer.Character and KillPlayer:FindFirstChild("HumanoidRootPart") then
-        for i = 1,6 do
-        local args = {[1] = "HandleDamage",[2] = {Character = KillPlayer.Character,Hit = KillPlayer.Character:FindFirstChild("HumanoidRootPart"),Type = "Normal",Norm = Vector3.new(0,0,0),Pos = Vector3.new(0,0,0),SpellName = "stupefy"}}
-        Remote:FireServer(unpack(args))
-        end
-    end
+	local KillPlayer = ChaosFunctions.stringToPlayer(value)
+	print(tostring(KillPlayer))
+	if KillPlayer.Character and KillPlayer:FindFirstChild("Head") then
+		for i = 1, 6 do
+			local args = {
+				[1] = "HandleDamage",
+				[2] = {
+					["Character"] = KillPlayer.Character,
+					Hit = KillPlayer.Character:FindFirstChild("Head"),
+					Type = "Normal",
+					Norm = Vector3.new(0, 0, 0),
+					Pos = Vector3.new(0, 0, 0),
+					SpellName = "stupefy"
+				}
+			}
+			Remote:FireServer(unpack(args))
+		end
+	end
 end)
