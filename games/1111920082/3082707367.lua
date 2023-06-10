@@ -36,7 +36,7 @@ Options.KillPlayer:OnChanged(function(value)
     local KillPlayer = ChaosFunctions.stringToPlayer(value)
     if KillPlayer.Character and KillPlayer:FindFirstChild("HumanoidRootPart") then
         for i = 1,6 do
-        local args = {[1] = "HandleDamage",[2] = {Character = KillPlayer.Character,Hit = KillPlayer.Character:FindFirstChild("HumanoidRootPart"),Type = "Normal",Norm = Vector3.new(0,0,0),Pos = Vector3.new(0,0,0),SpellName = "Stupefy"}}
+        local args = {[1] = "HandleDamage",[2] = {Character = KillPlayer.Character,Hit = KillPlayer.Character:FindFirstChild("HumanoidRootPart"),Type = "Normal",Norm = Vector3.new(0,0,0),Pos = Vector3.new(0,0,0),SpellName = "stupefy"}}
         Remote:FireServer(unpack(args))
         end
     end
