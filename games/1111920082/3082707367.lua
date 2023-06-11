@@ -19,7 +19,8 @@ local RunService = game:GetService("RunService")
 
 -- LOCAL VARIABLES HERE
 local ROWizardValues = {
-    ["ModWandToggle"] = false
+    ["ModWandToggle"] = false,
+	["BringPlayerTimeValue"] = 6
 }
 
 local Player = Players.LocalPlayer
@@ -119,4 +120,73 @@ Toggles.ModWand:OnChanged(function(value)
             ]]--
         end
     end
+end)
+
+local Autofarming = Tabs.Game:AddLeftGroupbox("Autofarms")
+
+local Misc = Tabs.Game:AddLeftGroupbox("Misc")
+
+Misc:AddInput("BringPlayer", {
+	Numeric = false,
+	Finished = true,
+	Text = "Bring Player",
+	Tooltip = "Brings a player!",
+	Placeholder = "Player name here!"
+})
+
+Options.BringPlayer:OnChanged(function(value)
+	if value == "" then
+		return
+	end
+	local KillPlayer = ChaosFunctions.stringToPlayer(value)
+	if KillPlayer.Character and KillPlayer.Character:FindFirstChild("Head") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+		spawn(function()
+			if KillPlayer.Character then
+				local v109 = KillPlayer.Character:FindFirstChildOfClass("Model"):FindFirstChildOfClass("Model"):FindFirstChildOfClass("MeshPart")
+				if v109 then
+				local args = {
+					[1] = "WingardiumToggle",
+					[2] = v109,
+					[3] = true
+				}
+				Remote:FireServer(unpack(args))
+				local v114 = Instance.new("BodyPosition");
+				v114.MaxForce = Vector3.new(math.huge, math.huge, math.huge);
+				v114.Position = v109.Parent.Parent.Parent:FindFirstChild("HumanoidRootPart").Position
+				v114.Parent = v109;
+				v114.D = 100;
+				local u34 = RunService.Stepped:Connect(function()
+					if Player.Character:FindFirstChild("HumanoidRootPart") and v109 then
+						v114.Position = Player.Character:FindFirstChild("HumanoidRootPart").Position * Vector3.new(0,0,3)
+					end
+				end)
+				wait(ROWizardValues["BringPlayerTimeValue"]);
+				u34:Disconnect();
+				v114:Destroy();
+					if v109 then
+						local args = {
+							[1] = "WingardiumToggle",
+							[2] = v109,
+							[3] = false
+						}
+						game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+					end
+				end
+			end
+		end)
+	end
+end)
+
+Misc:AddSlider("BringPlayerTime", {
+	Text = "Bring Player Length",
+	Default = 6,
+	Min = 0,
+	Max = 120,
+	Rounding = 0,
+	Compact = false,
+	Tooltip = "In seconds!"
+})
+
+Options.BringPlayerTime:OnChanged(function(value)
+    ROWizardValues["BringPlayerTimeValue"] = value
 end)
