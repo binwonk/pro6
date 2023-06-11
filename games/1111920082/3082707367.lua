@@ -110,12 +110,13 @@ Toggles.ModWand:OnChanged(function(value)
     else
         if typeof(ModWandConnection) == "RBXScriptConnection" then
             ModWandConnection:Disconnect()
-            for i,v in next,ModWandTable do
+			BinsploitNotify("Toggle currently work in progress!","Try again soon.",3)
+            --[[for i,v in next,ModWandTable do
 				Spells.Spells[i] = v
                 for x,d in next,v do
                     Spells.Spells[i][x] = d
                 end
-            end
+            ]]--
         end
     end
 end)
