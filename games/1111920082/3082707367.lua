@@ -111,9 +111,9 @@ Toggles.ModWand:OnChanged(function(value)
         if typeof(ModWandConnection) == "RBXScriptConnection" then
             ModWandConnection:Disconnect()
             for i,v in next,ModWandTable do
-				Spells.Spells[v] = {}
+				Spells.Spells[i] = v
                 for x,d in next,v do
-                    Spells.Spells[v][x] = d
+                    Spells.Spells[i][x] = d
                 end
             end
         end
