@@ -157,7 +157,7 @@ Options.BringPlayer:OnChanged(function(value)
 				v114.D = 100;
 				local u34 = RunService.Stepped:Connect(function()
 					if Player.Character:FindFirstChild("HumanoidRootPart") and v109 then
-						v114.Position = Player.Character:FindFirstChild("HumanoidRootPart").Position + Vector3.new(0,0,-3)
+						v114.Position = Player.Character:FindFirstChild("HumanoidRootPart").Position + Vector3.new(0,0,-5)
 					end
 				end)
 				wait(ROWizardValues["BringPlayerTimeValue"]);
