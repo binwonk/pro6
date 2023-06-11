@@ -222,10 +222,10 @@ Options.KillPlayerAlt:OnChanged(function(value)
 				v114.D = 100;
 				local u34 = RunService.Stepped:Connect(function()
 					if v114 and v109 then
-						v114.Position = Vector3.new(0,workspace.FallenPartsDestroyHeight + 1,0)
+						v114.Position = Vector3.new(0,workspace.FallenPartsDestroyHeight + 5,0)
 					end
 				end)
-				wait(1);
+				wait(0.5);
 				u34:Disconnect();
 				v114:Destroy();
 					if v109 then
