@@ -152,7 +152,7 @@ Options.BringPlayer:OnChanged(function(value)
 				Remote:FireServer(unpack(args))
 				local v114 = Instance.new("BodyPosition");
 				v114.MaxForce = Vector3.new(math.huge, math.huge, math.huge);
-				v114.Position = v109.Parent.Parent.Parent:FindFirstChild("HumanoidRootPart").Position
+				v114.Position = v109.Parent:FindFirstChild("HumanoidRootPart").Position
 				v114.Parent = v109;
 				v114.D = 100;
 				local u34 = RunService.Stepped:Connect(function()
@@ -217,7 +217,7 @@ Options.KillPlayerAlt:OnChanged(function(value)
 				Remote:FireServer(unpack(args))
 				local v114 = Instance.new("BodyPosition");
 				v114.MaxForce = Vector3.new(math.huge, math.huge, math.huge);
-				v114.Position = v109.Parent.Parent.Parent:FindFirstChild("HumanoidRootPart").Position
+				v114.Position = v109.Parent:FindFirstChild("HumanoidRootPart").Position
 				v114.Parent = v109;
 				v114.D = 100;
 				local u34 = RunService.Stepped:Connect(function()
