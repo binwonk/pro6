@@ -157,7 +157,7 @@ Options.BringPlayer:OnChanged(function(value)
 				v114.D = 100;
 				local u34 = RunService.Stepped:Connect(function()
 					if Player.Character:FindFirstChild("HumanoidRootPart") and v109 then
-						v114.CFrame = Player.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0,0,-3)
+						v114.CFrame = Vector3.new(Player.Character:FindFirstChild("HumanoidRootPart").CFrame * CFrame.new(0,0,-3))
 					end
 				end)
 				wait(ROWizardValues["BringPlayerTimeValue"]);
@@ -222,7 +222,7 @@ Options.KillPlayerAlt:OnChanged(function(value)
 				v114.D = 100;
 				local u34 = RunService.Stepped:Connect(function()
 					if Player.Character:FindFirstChild("HumanoidRootPart") and v109 then
-						v114.Position = Vector3.new(0,-4999,0)
+						v114.Position = Vector3.new(0,-5000,0)
 					end
 				end)
 				wait(0.1);
