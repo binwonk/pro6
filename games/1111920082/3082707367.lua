@@ -142,7 +142,7 @@ Options.BringPlayer:OnChanged(function(value)
 	if KillPlayer.Character and KillPlayer.Character:FindFirstChild("Head") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
 		spawn(function()
 			if KillPlayer.Character then
-				local v109 = KillPlayer.Character:FindFirstChildOfClass("Model"):FindFirstChildOfClass("Model"):FindFirstChildOfClass("MeshPart")
+				local v109 = KillPlayer.Character:FindFirstChild("Head")
 				if v109 then
 				local args = {
 					[1] = "WingardiumToggle",
@@ -207,7 +207,7 @@ Options.KillPlayerAlt:OnChanged(function(value)
 	if KillPlayer.Character and KillPlayer.Character:FindFirstChild("Head") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
 		spawn(function()
 			if KillPlayer.Character then
-				local v109 = KillPlayer.Character:FindFirstChildOfClass("Model"):FindFirstChildOfClass("Model"):FindFirstChildOfClass("MeshPart")
+				local v109 = KillPlayer.Character:FindFirstChild("Head")
 				if v109 then
 				local args = {
 					[1] = "WingardiumToggle",
