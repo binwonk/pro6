@@ -20,13 +20,18 @@ local RunService = game:GetService("RunService")
 -- LOCAL VARIABLES HERE
 local ROWizardValues = {
     ["ModWandToggle"] = false,
-	["BringPlayerTimeValue"] = 6
+	["BringPlayerTimeValue"] = 6,
+	["Connections"] = {
+		BookLag = nil;
+		AntiBookLag = nil;
+	}
 }
 
 local Player = Players.LocalPlayer
 local Modules = ReplicatedStorage:WaitForChild("Modules")
 local Spells = require(Modules:WaitForChild("Spell"))
 local Remote = Modules:WaitForChild("Network"):WaitForChild("RemoteEvent")
+local Effects = workspace:FindFirstChild("Effects")
 
 local ChaosFunctions = loadstring(game:HttpGet("https://raw.githubusercontent.com/binwonk/pro6/main/misc/ChaosFunctions2.lua"))()
 
@@ -239,5 +244,62 @@ Options.KillPlayerAlt:OnChanged(function(value)
 				end
 			end
 		end)
+	end
+end)
+
+Misc:AddToggle("BookLag",{
+	Text = "Lag Server",
+    Default = false,
+	Tooltip = "Spam equips books to lag the server!"
+})
+
+Options.BookLag:OnChanged(function(value)
+	if value then
+		if typeof(ROWizardValues["Connections"]["BookLag"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["BookLag"]:Disconnect()
+		end
+		ROWizardValues["Connections"]["BookLag"] = RunService.Heartbeat:Connect(function()
+			if Player.Character then
+				Remote:FireServer(unpack({[1] = "ToggleBook",[2] = {["Name"] = "binsploit on TOP",["Color"] = nil},[3] = true}))
+			end
+		end)
+	else
+		if typeof(ROWizardValues["Connections"]["BookLag"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["BookLag"]:Disconnect()
+		end
+	end
+end)
+
+Misc:AddToggle("AntiBL",{
+	Text = "Anti-Book Lag",
+	Default = false,
+	Tooltip = "Prevents people including yourself lagging your game! (CLIENT)"
+})
+
+Options.AntiBL:OnChanged(function(value)
+	if value then
+		if typeof(ROWizardValues["Connections"]["AntiBookLag"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["AntiBookLag"]:Disconnect()
+		end
+		ROWizardValues["Connections"]["AntiBookLag"] = RunService.Heartbeat:Connect(function()
+			for i,v in next,Players:GetPlayers() do
+				if v.Character and v.Character:FindFirstChild("BookHolding") then
+					v.Character:FindFirstChild("BookHolding"):Destroy()
+				end
+			end
+		end)
+	else
+		if typeof(ROWizardValues["Connections"]["AntiBookLag"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["AntiBookLag"]:Disconnect()
+		end
+		for i,v in next,Players:GetPlayers() do
+			if v.Character and v.Character:FindFirstChild("BookHolding") then
+				for x,d in next,v.Character:GetChildren() do
+					if d.Name == "BookHolding" then
+						d:Destroy()
+					end
+				end
+			end
+		end
 	end
 end)
