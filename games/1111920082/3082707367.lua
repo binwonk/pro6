@@ -253,7 +253,7 @@ Misc:AddToggle("BookLag",{
 	Tooltip = "Spam equips books to lag the server!"
 })
 
-Options.BookLag:OnChanged(function(value)
+Toggles.BookLag:OnChanged(function(value)
 	if value then
 		if typeof(ROWizardValues["Connections"]["BookLag"]) == "RBXScriptConnection" then
 			ROWizardValues["Connections"]["BookLag"]:Disconnect()
@@ -276,8 +276,17 @@ Misc:AddToggle("AntiBL",{
 	Tooltip = "Prevents people including yourself lagging your game! (CLIENT)"
 })
 
-Options.AntiBL:OnChanged(function(value)
+Toggles.AntiBL:OnChanged(function(value)
 	if value then
+		for i,v in next,Players:GetPlayers() do
+			if v.Character and v.Character:FindFirstChild("BookHolding") then
+				for x,d in next,v.Character:GetChildren() do
+					if d.Name == "BookHolding" then
+						d:Destroy()
+					end
+				end
+			end
+		end
 		if typeof(ROWizardValues["Connections"]["AntiBookLag"]) == "RBXScriptConnection" then
 			ROWizardValues["Connections"]["AntiBookLag"]:Disconnect()
 		end
@@ -303,5 +312,3 @@ Options.AntiBL:OnChanged(function(value)
 		end
 	end
 end)
-
-getgenv().BinsploitLoaded = true
