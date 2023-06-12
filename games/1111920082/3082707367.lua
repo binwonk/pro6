@@ -303,3 +303,5 @@ Options.AntiBL:OnChanged(function(value)
 		end
 	end
 end)
+
+getgenv().BinsploitLoaded = true
