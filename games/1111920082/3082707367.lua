@@ -26,7 +26,9 @@ local ROWizardValues = {
 		BookLag = nil;
 		AntiBookLag = nil;
 	},
-	["BooksToRemove"] = 0
+	["BooksToRemove"] = 0,
+	["OldIndexHook"] = nil,
+	["OldNamecallHook"] = nil
 }
 
 local Player = Players.LocalPlayer
@@ -36,6 +38,20 @@ local Remote = Modules:WaitForChild("Network"):WaitForChild("RemoteEvent")
 local Effects = workspace:FindFirstChild("Effects")
 
 local ChaosFunctions = loadstring(game:HttpGet("https://raw.githubusercontent.com/binwonk/pro6/main/misc/ChaosFunctions2.lua"))()
+
+-- HOOKS HERE
+
+ROWizardValues["OldNamecallHook"] = hookmetamethod(game,"__namecall",function(self,...)
+	local args = {...}
+	if not checkcaller() and tostring(self) == "RemoteEvent" and getnamecallmethod() == "FireServer" then
+		if args[1] == "HandleDamage" and args[2]["Type"] == "Explosive" then
+			if args[2]["SpellName"] == "confringo" then
+				args[2]["SpellName"] = "fiendfyre"
+				return ROWizardValues["OldNamecallHook"](self,unpack(args))
+			end
+		end
+	end
+end)
 
 --GAME SCRIPT HERE
 local Combat = Tabs.Game:AddLeftGroupbox("Combat")
@@ -69,6 +85,16 @@ Options.KillPlayer:OnChanged(function(value)
 			Remote:FireServer(unpack(args))
 		end
 	end
+end)
+
+Combat:AddToggle("AutoCon",{
+	Text = "Auto 40 Damage Confringo",
+	Default = false,
+	Tooltip = "All your confringos will automatically deal 40 damage, rather than the normal 20!"
+})
+
+Toggles.AutoCon:OnChanged(function(value)
+	
 end)
 
 Combat:AddToggle("ModWand", {
@@ -346,4 +372,14 @@ Toggles.AntiBL:OnChanged(function(value)
 			end
 		end
 	end
+end)
+
+Misc:AddToggle("FlingAllAlt",{
+	Text = "Fling All (Alt)",
+	Default = false,
+	Tooltip = "An alternate way of flinging everyone!"
+})
+
+Toggles.FlingAllAlt:OnChanged(function(value)
+	
 end)
