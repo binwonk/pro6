@@ -287,6 +287,7 @@ Toggles.BookLag:OnChanged(function(value)
 		if typeof(ROWizardValues["Connections"]["BookLag"]) == "RBXScriptConnection" then
 			ROWizardValues["Connections"]["BookLag"]:Disconnect()
 		end
+		ROWizardValues["BooksToRemove"] = 0
 		ROWizardValues["Connections"]["BookLag"] = RunService.Heartbeat:Connect(function()
 			if Player.Character then
 				Remote:FireServer(unpack({[1] = "ToggleBook",[2] = {["Name"] = "binsploit on TOP",["Color"] = nil},[3] = true}))
