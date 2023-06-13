@@ -25,7 +25,8 @@ local ROWizardValues = {
 		HoopAutofarm = nil;
 		BookLag = nil;
 		AntiBookLag = nil;
-	}
+	},
+	["BooksToRemove"] = 0
 }
 
 local Player = Players.LocalPlayer
@@ -290,10 +291,15 @@ Toggles.BookLag:OnChanged(function(value)
 			if Player.Character then
 				Remote:FireServer(unpack({[1] = "ToggleBook",[2] = {["Name"] = "binsploit on TOP",["Color"] = nil},[3] = true}))
 			end
+			ROWizardValues["BooksToRemove"] = ROWizardValues["BooksToRemove"] + 1;
 		end)
 	else
 		if typeof(ROWizardValues["Connections"]["BookLag"]) == "RBXScriptConnection" then
 			ROWizardValues["Connections"]["BookLag"]:Disconnect()
+		end
+		for i = 1,ROWizardValues["BooksToRemove"] do
+			Remote:FireServer(unpack({[1] = "ToggleBook",[2] = {["Name"] = "binsploit on TOP",["Color"] = nil},[3] = false}))
+			task.wait()
 		end
 	end
 end)
