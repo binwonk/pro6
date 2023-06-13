@@ -389,7 +389,7 @@ Misc:AddToggle("FlingAllAlt",{
 Toggles.FlingAllAlt:OnChanged(function(value)
 end)
 
-Misc:AddToggle("FlingPlayerAlt",{
+Misc:AddInput("FlingPlayerAlt",{
 	Text = "Fling Player",
 	Tooltip = "Flings a player!",
 	Placeholder = "Player name here!",
