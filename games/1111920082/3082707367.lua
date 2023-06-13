@@ -22,6 +22,7 @@ local ROWizardValues = {
     ["ModWandToggle"] = false,
 	["BringPlayerTimeValue"] = 6,
 	["Connections"] = {
+		HoopAutofarm = nil;
 		BookLag = nil;
 		AntiBookLag = nil;
 	}
@@ -129,6 +130,33 @@ end)
 
 local Autofarming = Tabs.Game:AddLeftGroupbox("Autofarms")
 
+Autofarming:AddToggle("HoopAutofarm",{
+	Text = "Hoop Autofarm",
+    Default = false,
+	Tooltip = "Autofarms hoops to get XP!"
+})
+
+Toggles.HoopAutofarm:OnChanged(function(value)
+	if value then
+		if typeof(ROWizardValues["Connections"]["HoopAutofarm"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["HoopAutofarm"]:Disconnect()
+		end
+		ROWizardValues["Connections"]["HoopAutofarm"] = RunService.Heartbeat:Connect(function()
+			for i,v in next,workspace:FindFirstChild("Effects"):GetChildren() do
+				if v.Name == "Hoop" and Player.Character and Player.Character:FindFirstChild("Head") then
+					firetouchinterest(Player.Character:FindFirstChild("Head"),v,0)
+					task.wait()
+					firetouchinterest(Player.Character:FindFirstChild("Head"),v,1)
+				end
+			end
+		end)
+	else
+		if typeof(ROWizardValues["Connections"]["HoopAutofarm"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["HoopAutofarm"]:Disconnect()
+		end
+	end
+end)
+
 local Misc = Tabs.Game:AddRightGroupbox("Misc")
 
 Misc:AddInput("BringPlayer", {
@@ -230,7 +258,7 @@ Options.KillPlayerAlt:OnChanged(function(value)
 						v114.Position = Vector3.new(0,workspace.FallenPartsDestroyHeight + 5,0)
 					end
 				end)
-				wait(0.5);
+				wait(1.5);
 				u34:Disconnect();
 				v114:Destroy();
 					if v109 then
