@@ -29,7 +29,11 @@ local ROWizardValues = {
 	},
 	["BooksToRemove"] = 0,
 	["OldIndexHook"] = nil,
-	["OldNamecallHook"] = nil
+	["OldNamecallHook"] = nil,
+	["FakeBring"] = {
+		PlayerToFake = nil;
+		PlayerToBring = nil;
+	}
 }
 
 local Player = Players.LocalPlayer
@@ -385,3 +389,89 @@ Misc:AddToggle("FlingAllAlt",{
 Toggles.FlingAllAlt:OnChanged(function(value)
 	
 end)
+
+if Player.Name == "binwonkXD" then -- if this is still here then i'm bad at scripting and a skid and my life serves NO purpose...
+local Blame = Tabs.Game:AddRightGroupbox("Accusation-hax")
+
+Blame:AddInput("FakeUser",{
+	Numeric = false,
+	Finished = true,
+	Text = "Player to bring to!",
+	Tooltip = "PLACEHOLDER",
+	Placeholder = "Player name here!"
+})
+
+Options.FakeUser:OnChanged(function(value)
+	if tostring(value) == "" then
+        return
+    end
+	local FakeBring = ChaosFunctions.stringToPlayer(value)
+	if FakeBring then
+		ROWizardValues["FakeBring"]["PlayerToFake"] = FakeBring
+	end
+end)
+
+Blame:AddInput("FakeUserBring",{
+	Numeric = false,
+	Finished = true,
+	Text = "Player to bring!",
+	Tooltip = "PLACEHOLDER",
+	Placeholder = "Player name here!"
+})
+
+Options.FakeUserBring:OnChanged(function(value)
+	if tostring(value) == "" then
+        return
+    end
+	local FakeBring = ChaosFunctions.stringToPlayer(value)
+	if FakeBring then
+		ROWizardValues["FakeBring"]["PlayerToBring"] = FakeBring
+	end
+end)
+
+Blame:AddButton({
+	Text = "Frame them!",
+	Tooltip = "this gonna be so good",
+	Func = function()
+		KillPlayer = ROWizardValues["FakeBring"]["PlayerToBring"]
+		TrollPlayer = ROWizardValues["FakeBring"]["PlayerToFake"]
+		if KillPlayer.Character and KillPlayer.Character:FindFirstChild("Head") and TrollPlayer.Character and TrollPlayer.Character:FindFirstChild("HumanoidRootPart") then
+			spawn(function()
+				if KillPlayer.Character then
+					local v109 = KillPlayer.Character:FindFirstChild("Head")
+					if v109 then
+					local args = {
+						[1] = "WingardiumToggle",
+						[2] = v109,
+						[3] = true
+					}
+					Remote:FireServer(unpack(args))
+					local v114 = Instance.new("BodyPosition");
+					v114.MaxForce = Vector3.new(math.huge, math.huge, math.huge);
+					v114.Position = v109.Parent:FindFirstChild("HumanoidRootPart").Position
+					v114.Parent = v109;
+					v114.D = 100;
+					local u34 = RunService.Stepped:Connect(function()
+						if TrollPlayer.Character:FindFirstChild("HumanoidRootPart") and v109 then
+							v114.Position = TrollPlayer.Character:FindFirstChild("HumanoidRootPart").Position + Vector3.new(0,0,-5)
+						end
+					end)
+					wait(6);
+					u34:Disconnect();
+					v114:Destroy();
+						if v109 then
+							local args = {
+								[1] = "WingardiumToggle",
+								[2] = v109,
+								[3] = false
+							}
+							game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+						end
+					end
+				end
+			end)
+		end
+	end
+})
+
+end
