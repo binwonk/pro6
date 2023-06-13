@@ -20,6 +20,7 @@ local RunService = game:GetService("RunService")
 -- LOCAL VARIABLES HERE
 local ROWizardValues = {
     ["ModWandToggle"] = false,
+	["AutoConfringo"] = false,
 	["BringPlayerTimeValue"] = 6,
 	["Connections"] = {
 		HoopAutofarm = nil;
@@ -45,7 +46,7 @@ ROWizardValues["OldNamecallHook"] = hookmetamethod(game,"__namecall",function(se
 	local args = {...}
 	if not checkcaller() and tostring(self) == "RemoteEvent" and getnamecallmethod() == "FireServer" then
 		if args[1] == "HandleDamage" and args[2]["Type"] == "Explosive" then
-			if args[2]["SpellName"] == "confringo" then
+			if args[2]["SpellName"] == "confringo" and ROWizardValues["AutoConfringo"] then
 				args[2]["SpellName"] = "fiendfyre"
 				return ROWizardValues["OldNamecallHook"](self,unpack(args))
 			end
@@ -95,7 +96,7 @@ Combat:AddToggle("AutoCon",{
 })
 
 Toggles.AutoCon:OnChanged(function(value)
-	
+	ROWizardValues["AutoConfringo"] = value
 end)
 
 Combat:AddToggle("ModWand", {
