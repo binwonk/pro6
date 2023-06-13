@@ -51,6 +51,7 @@ ROWizardValues["OldNamecallHook"] = hookmetamethod(game,"__namecall",function(se
 			end
 		end
 	end
+	return ROWizardValues["OldNamecallHook"](self,unpack(args))
 end)
 
 --GAME SCRIPT HERE
