@@ -397,7 +397,7 @@ Misc:AddInput("FlingPlayerAlt",{
 	Finished = true
 })
 
-Toggles.FlingPlayerAlt:OnChanged(function(value)
+Options.FlingPlayerAlt:OnChanged(function(value)
 	if tostring(value) == "" then
         return
     end
