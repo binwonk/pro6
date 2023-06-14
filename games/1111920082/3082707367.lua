@@ -571,7 +571,7 @@ Options.TeleportsDropdown:OnChanged(function(str)
 	end
 end)
 
-Teleport:AddButton("TeleportToLocation",{
+Teleport:AddButton({
 	Text = "Teleport!",
 	Tooltip = "Teleports to the location selected above!",
 	Func = function()
