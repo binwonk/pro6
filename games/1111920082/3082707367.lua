@@ -536,8 +536,7 @@ Options.FlingPlayerAlt:OnChanged(function(value)
 	end
 end)
 
-if Player.Name == "binwonkXD" then -- if this is still here then i'm bad at scripting and a skid and my life serves NO purpose...
-local Blame = Tabs.Game:AddRightGroupbox("Accusation-hax")
+local Blame = Tabs.Game:AddRightGroupbox("PLACEHOLDER NAME")
 
 Blame:AddInput("FakeUser",{
 	Numeric = false,
@@ -576,8 +575,8 @@ Options.FakeUserBring:OnChanged(function(value)
 end)
 
 Blame:AddButton({
-	Text = "Frame them!",
-	Tooltip = "this gonna be so good",
+	Text = "Do the thing!",
+	Tooltip = "DON'T DO THIS UNLESS MY FEATURE NAMES ARE CLEAR ENOUGH",
 	Func = function()
 		local KillPlayer = ROWizardValues["FakeBring"]["PlayerToBring"]
 		local TrollPlayer = ROWizardValues["FakeBring"]["PlayerToFake"]
@@ -619,7 +618,6 @@ Blame:AddButton({
 		end
 	end
 })
-end
 
 local Teleport = Tabs.Game:AddRightGroupbox("Teleports")
 
@@ -746,7 +744,7 @@ Store:AddDropdown("SelectOutfit",{
 })
 
 Options.SelectOutfit:OnChanged(function(value)
-	if value ~= "--" or value ~= "" or value ~= nil then
+	if value ~= "--" or value ~= "" or value ~= nil or value ~= "nil" then
 		local args = {
 			[1] = "Equip",
 			[2] = {
