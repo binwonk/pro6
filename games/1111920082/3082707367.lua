@@ -560,9 +560,11 @@ Teleport:AddDropdown("TeleportsDropdown",{
 })
 
 Options.TeleportsDropdown:OnChanged(function(str)
-	str = ROWizardValues["TeleportTable2"][str]
-	str = CFrame.new(table.unpack(str:gsub(" ",""):split(",")))
-	ROWizardValues["LocationSelected"] = str
+	if str ~= "" then
+		str = ROWizardValues["TeleportTable2"][str]
+		str = CFrame.new(table.unpack(str:gsub(" ",""):split(",")))
+		ROWizardValues["LocationSelected"] = str
+	end
 end)
 
 Teleport:AddButton("TeleportToLocation",{
