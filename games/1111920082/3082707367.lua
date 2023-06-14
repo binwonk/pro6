@@ -18,6 +18,12 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 -- LOCAL VARIABLES HERE
+local Player = Players.LocalPlayer
+local Modules = ReplicatedStorage:WaitForChild("Modules")
+local Spells = require(Modules:WaitForChild("Spell"))
+local Remote = Modules:WaitForChild("Network"):WaitForChild("RemoteEvent")
+local Effects = workspace:FindFirstChild("Effects")
+
 local ROWizardValues = {
     ["ModWandToggle"] = false,
 	["AutoConfringo"] = false,
@@ -33,14 +39,20 @@ local ROWizardValues = {
 	["FakeBring"] = {
 		PlayerToFake = nil;
 		PlayerToBring = nil;
-	}
+	},
+	["TeleportTable"] = {
+		["Grand Hall"] = CFrame.new(-6.98583317, 3.26444864, -237.789932, 0.999627113, 3.01348657e-09, -0.0273053069, -2.85575763e-09, 1, 5.81549564e-09, 0.0273053069, -5.73534997e-09, 0.999627113),
+		["Serpents Common Room"] = CFrame.new(345.465912, -58.8441238, 312.809479, 0.996278286, 5.76638399e-08, -0.0861949921, -5.65189175e-08, 1, 1.57233e-08, 0.0861949921, -1.07931344e-08, 0.996278286),
+		["Badgers Common Room"] = CFrame.new(26.4316196, -148.428452, -224.473129, 0.0229754951, 5.64194746e-10, -0.999736011, 2.29062529e-08, 1, 1.09076526e-09, 0.999736011, -2.2925267e-08, 0.0229754951),
+		["Lions Common Room"] = CFrame.new(317.076294, 174.698257, -321.223083, 0.873360097, -5.84550985e-09, -0.48707512, -1.30239126e-08, 1, -3.5354045e-08, 0.48707512, 3.72204347e-08, 0.873360097),
+		["Ravens Common Room"] = CFrame.new(872.183838, 234.559326, -147.583115, 0.997416735, 6.57174704e-10, -0.071832329, -1.3341096e-09, 1, -9.37584144e-09, 0.071832329, 9.4474526e-09, 0.997416735),
+		["Duelling Arena"] = CFrame.new(-748.834106, -107.285576, -444.290924, -0.955545008, 3.22644524e-08, -0.294845313, 4.96480101e-09, 1, 9.33383006e-08, 0.294845313, 8.77250983e-08, -0.955545008),
+		["Azkaban Outside"] = CFrame.new(-938.264771, 973.247803, 2759.89624, -0.89939636, 4.38394565e-09, 0.437134057, 1.21720625e-08, 1, 1.50149884e-08, -0.437134057, 1.88252489e-08, -0.89939636),
+		["Azkaban Inside"] = CFrame.new(-1006.8493, 973.002991, 2906.17676, -0.929947078, -5.77469406e-09, 0.367693365, 2.80315171e-09, 1, 2.27947456e-08, -0.367693365, 2.22286083e-08, -0.929947078)
+	},
+	["LocationSelected"] = nil,
+	["PlayerToTeleport"] = Player
 }
-
-local Player = Players.LocalPlayer
-local Modules = ReplicatedStorage:WaitForChild("Modules")
-local Spells = require(Modules:WaitForChild("Spell"))
-local Remote = Modules:WaitForChild("Network"):WaitForChild("RemoteEvent")
-local Effects = workspace:FindFirstChild("Effects")
 
 local ChaosFunctions = loadstring(game:HttpGet("https://raw.githubusercontent.com/binwonk/pro6/main/misc/ChaosFunctions2.lua"))()
 
@@ -175,7 +187,7 @@ Toggles.HoopAutofarm:OnChanged(function(value)
 			ROWizardValues["Connections"]["HoopAutofarm"]:Disconnect()
 		end
 		ROWizardValues["Connections"]["HoopAutofarm"] = RunService.Heartbeat:Connect(function()
-			for i,v in next,workspace:FindFirstChild("Effects"):GetChildren() do
+			for i,v in next,Effects:GetChildren() do
 				if v.Name == "Hoop" and Player.Character and Player.Character:FindFirstChild("Head") then
 					firetouchinterest(Player.Character:FindFirstChild("Head"),v,0)
 					task.wait()
@@ -528,3 +540,85 @@ Blame:AddButton({
 })
 
 end
+
+local Teleport = Tabs.Game:AddRightGroupbox("Teleports")
+
+Teleport:AddDropdown("TeleportsDropdown",{
+	Values = ROWizardValues["TeleportTable"],
+	Text = "Teleports Dropdown",
+	Tooltip = "Select a location, then click the teleport button below!"
+})
+
+Options.TeleportsDropdown:OnChanged(function(value)
+	ROWizardValues["LocationSelected"] = value
+end)
+
+Teleport:AddButton("TeleportToLocation",{
+	Text = "Teleport!",
+	Tooltip = "Teleports to the location selected above!",
+	Func = function()
+		if ROWizardValues["PlayerToTeleport"].Character and ROWizardValues["PlayerToTeleport"].Character:FindFirstChild("HumanoidRootPart") then
+			if ROWizardValues["PlayerToTeleport"] == Player then
+				ROWizardValues["PlayerToTeleport"].Character:FindFirstChild("HumanoidRootPart").CFrame = ROWizardValues["LocationSelected"]
+			else
+				local KillPlayer = ROWizardValues["PlayerToTeleport"]
+				local TrollPlayer = ROWizardValues["PlayerToTeleport"]
+				if KillPlayer.Character and KillPlayer.Character:FindFirstChild("Head") and TrollPlayer.Character and TrollPlayer.Character:FindFirstChild("HumanoidRootPart") then
+					spawn(function()
+						if KillPlayer.Character then
+							local v109 = KillPlayer.Character:FindFirstChild("Head")
+							if v109 then
+							local args = {
+								[1] = "WingardiumToggle",
+								[2] = v109,
+								[3] = true
+							}
+							Remote:FireServer(unpack(args))
+							local v114 = Instance.new("BodyPosition");
+							v114.MaxForce = Vector3.new(math.huge, math.huge, math.huge);
+							v114.Position = v109.Parent:FindFirstChild("HumanoidRootPart").Position
+							v114.Parent = v109;
+							v114.D = 100;
+							local u34 = RunService.Stepped:Connect(function()
+								if TrollPlayer.Character:FindFirstChild("HumanoidRootPart") and v109 then
+									v114.Position = ROWizardValues["LocationSelected"]
+								end
+							end)
+							wait(6);
+							u34:Disconnect();
+							v114:Destroy();
+								if v109 then
+									local args = {
+										[1] = "WingardiumToggle",
+										[2] = v109,
+										[3] = false
+									}
+									game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+								end
+							end
+						end
+					end)
+				end
+			end
+		end
+	end
+})
+
+Teleport:AddInput("TeleportSelector",{
+	Text = "Player to teleport",
+	Tooltip = "Optional! Leave blank for self/type in self/type in your own username to teleport yourself! (autofills)",
+	Placeholder = "Player name here!",
+	Numeric = false,
+	Finished = true
+})
+
+Options.TeleportSelector:OnChanged(function(value)
+	if value == "" or value == "self" then
+		ROWizardValues["PlayerToTeleport"] = Player
+		return
+	end
+	TOTP = ChaosFunctions.stringToPlayer(value)
+	if TOTP then
+		ROWizardValues["PlayerToTeleport"] = TOTP
+	end
+end)
