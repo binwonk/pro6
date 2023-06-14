@@ -546,7 +546,8 @@ local Teleport = Tabs.Game:AddRightGroupbox("Teleports")
 Teleport:AddDropdown("TeleportsDropdown",{
 	Values = ROWizardValues["TeleportTable"],
 	Text = "Teleports Dropdown",
-	Tooltip = "Select a location, then click the teleport button below!"
+	Tooltip = "Select a location, then click the teleport button below!",
+	AllowNull = true
 })
 
 Options.TeleportsDropdown:OnChanged(function(value)
