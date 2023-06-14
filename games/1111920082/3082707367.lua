@@ -30,8 +30,10 @@ local ROWizardValues = {
 	["BringPlayerTimeValue"] = 6,
 	["Connections"] = {
 		HoopAutofarm = nil;
+		PotionAutofarm = nil;
 		BookLag = nil;
 		AntiBookLag = nil;
+		FlingAll = nil;
 	},
 	["BooksToRemove"] = 0,
 	["OldIndexHook"] = nil,
@@ -61,8 +63,16 @@ local ROWizardValues = {
 		"Azkaban Inside"
 	},
 	["LocationSelected"] = nil,
-	["PlayerToTeleport"] = Player
+	["PlayerToTeleport"] = Player,
+	["ROWizardOutfits"] = require(Modules:WaitForChild("Outfits")),
+	["ROWizardOutfitsTable"] = {},
+	["StoreGemsTable"] = {}
 }
+
+for i,v in next,ReplicatedStorage:WaitForChild("Outfits"):GetChildren() do
+	local ToAddToTable = v.Name:gsub(" ", "")
+	table.insert(ROWizardValues["ROWizardOutfitsTable"],ToAddToTable)
+end
 
 local ChaosFunctions = loadstring(game:HttpGet("https://raw.githubusercontent.com/binwonk/pro6/main/misc/ChaosFunctions2.lua"))()
 
@@ -212,6 +222,29 @@ Toggles.HoopAutofarm:OnChanged(function(value)
 	end
 end)
 
+Autofarming:AddToggle("PotionAutofarm",{
+	Text = "Potion Autofarm",
+	Default = false,
+	Tooltip = "Autofarms potions to get XP!"
+})
+
+Toggles.PotionAutofarm:OnChanged(function(value)
+	if value then
+		if typeof(ROWizardValues["Connections"]["PotionAutofarm"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["PotionAutofarm"]:Disconnect()
+		end
+		ROWizardValues["Connections"]["PotionAutofarm"] = RunService.Heartbeat:Connect(function()
+			local args = {[1] = "Bottle", [2] = {[1] = {["Color"] = nil --[[Color3]],["MaxAmount"] = 5,["Name"] = "Filofia Mushroom",["Amount"] = 5},[2] = {} --[[DUPLICATE]],[3] = {["Color"] = nil --[[Color3]],["MaxAmount"] = 10,["Name"] = "Pumpkin Juice",["Amount"] = 7},[4] = {["Color"] = nil --[[Color3]],["MaxAmount"] = 5,["Name"] = "Honey",["Amount"] = 5}}}
+			args[2][2] = args[2][1]
+			Remote:FireServer(unpack(args))
+		end)
+	else
+		if typeof(ROWizardValues["Connections"]["PotionAutofarm"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["PotionAutofarm"]:Disconnect()
+		end
+	end
+end)
+
 local Misc = Tabs.Game:AddRightGroupbox("Misc")
 
 Misc:AddInput("BringPlayer", {
@@ -257,7 +290,7 @@ Options.BringPlayer:OnChanged(function(value)
 							[2] = v109,
 							[3] = false
 						}
-						game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+						Remote:FireServer(unpack(args))
 					end
 				end
 			end
@@ -322,7 +355,7 @@ Options.KillPlayerAlt:OnChanged(function(value)
 							[2] = v109,
 							[3] = false
 						}
-						game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+						Remote:FireServer(unpack(args))
 					end
 				end
 			end
@@ -402,6 +435,41 @@ Toggles.AntiBL:OnChanged(function(value)
 	end
 end)
 
+Misc:AddToggle("FlingAll",{
+	Text = "Fling All",
+	Default = false,
+	Tooltip = "Flings everyone in the server!"
+})
+
+Toggles.FlingAll:OnChanged(function(value)
+	if value then
+		if typeof(ROWizardValues["Connections"]["FlingAll"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["FlingAll"]:Disconnect()
+		end
+		ROWizardValues["Connections"]["FlingAll"] = RunService.Heartbeat:Connect(function()
+			for i, v in next,game:GetService("Players"):GetPlayers() do
+				if v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v ~= game:GetService("Players").LocalPlayer then
+					local args = {
+						[1] = "HandleDamage",
+						[2] = {
+							["Type"] = "Normal",
+							["Hit"] = v.Character.HumanoidRootPart,
+							["Norm"] = Vector3.new(math.huge, math.huge, math.huge),
+							["Pos"] = v.Character.HumanoidRootPart.Position,
+							["SpellName"] = "levicorpus"
+						}
+					}
+					game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+				end
+			end
+		end)
+	else
+		if typeof(ROWizardValues["Connections"]["FlingAll"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["FlingAll"]:Disconnect()
+		end
+	end
+end)
+
 Misc:AddToggle("FlingAllAlt",{
 	Text = "Fling All (Alt)",
 	Default = false,
@@ -409,6 +477,9 @@ Misc:AddToggle("FlingAllAlt",{
 })
 
 Toggles.FlingAllAlt:OnChanged(function(value)
+	if value then
+		BinsploitNotify("Feature currently in development!", "Try again later!", 3)
+	end
 end)
 
 Misc:AddInput("FlingPlayerAlt",{
@@ -456,7 +527,7 @@ Options.FlingPlayerAlt:OnChanged(function(value)
 								[2] = v109,
 								[3] = false
 							}
-							game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+							Remote:FireServer(unpack(args))
 						end
 					end
 				end
@@ -540,7 +611,7 @@ Blame:AddButton({
 								[2] = v109,
 								[3] = false
 							}
-							game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+							Remote:FireServer(unpack(args))
 						end
 					end
 				end
@@ -573,7 +644,7 @@ end)
 
 Teleport:AddButton({
 	Text = "Teleport!",
-	Tooltip = "Teleports to the location selected above!",
+	Tooltip = "Teleports to the location selected above! Doesn't work with other players YET!",
 	Func = function()
 		if ROWizardValues["PlayerToTeleport"].Character and ROWizardValues["PlayerToTeleport"].Character:FindFirstChild("HumanoidRootPart") then
 			if ROWizardValues["PlayerToTeleport"] == Player then
@@ -611,7 +682,7 @@ Teleport:AddButton({
 										[2] = v109,
 										[3] = false
 									}
-									game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+									Remote:FireServer(unpack(args))
 								end
 							end
 						end
@@ -638,5 +709,50 @@ Options.TeleportSelector:OnChanged(function(value)
 	TOTP = ChaosFunctions.stringToPlayer(value)
 	if TOTP then
 		ROWizardValues["PlayerToTeleport"] = TOTP
+	end
+end)
+
+local Store = Tabs.Game:AddLeftGroupbox("Store")
+
+Store:AddToggle("FreeStoreToggle",{
+	Text = "Free Store",
+	Tooltip = "When enabled, all prices in the store are ALMOST free! (You need 1 gem to purchase.)",
+	Default = false
+})
+
+Toggles.FreeStoreToggle:OnChanged(function(value)
+	if value then
+		ROWizardValues["StoreGemsTable"] = {}
+		for i, v in next,getgc(true) do
+			if type(v) == "table" and rawget(v, "Gems") and rawget(v, "Rarity") then
+				table.foreach(v,print)
+				v.Gems = 0.00000001
+			end
+		end
+	end
+end)
+
+Store:AddDropdown("SelectOutfit",{
+	Text = "Equip Outfit",
+	Tooltip = "Equips an outfit! (some unobtainable outfits in there too)",
+	Values = ROWizardValues["ROWizardOutfitsTable"],
+	AllowNull = true
+})
+
+Options.SelectOutfit:OnChanged(function(value)
+	if value ~= "" then
+		local args = {
+			[1] = "Equip",
+			[2] = {
+				["HouseColor"] = true,
+				["Name"] = "School Uniform",
+				["Owner"] = Player,
+				["OutfitName"] = value,
+				["Gems"] = 0.0000001,
+				["Type"] = "Outfit",
+				["Rarity"] = "Common"
+			}
+		}
+		Remote:FireServer(unpack(args))
 	end
 end)
