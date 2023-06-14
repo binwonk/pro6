@@ -725,8 +725,14 @@ Toggles.FreeStoreToggle:OnChanged(function(value)
 		ROWizardValues["StoreGemsTable"] = {}
 		for i, v in next,getgc(true) do
 			if type(v) == "table" and rawget(v, "Gems") and rawget(v, "Rarity") then
-				table.foreach(v,print)
+				ROWizardValues["StoreGemsTable"][v.Name] = v.Gems
 				v.Gems = 0.00000001
+			end
+		end
+	else
+		for i, v in next,getgc(true) do
+			if type(v) == "table" and rawget(v, "Gems") and rawget(v, "Rarity") then
+				v.Gems = ROWizardValues["StoreGemsTable"][v.Name]
 			end
 		end
 	end
@@ -740,7 +746,8 @@ Store:AddDropdown("SelectOutfit",{
 })
 
 Options.SelectOutfit:OnChanged(function(value)
-	if value ~= "" then
+	print(value)
+	if value ~= "--" or value ~= "" then
 		local args = {
 			[1] = "Equip",
 			[2] = {
