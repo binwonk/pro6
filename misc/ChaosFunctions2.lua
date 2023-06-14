@@ -2,8 +2,6 @@
     hi welcome to most skidded script ever hope you enjoy reading the great code :pray:
 ]]--
 
-local StartTime = os.clock()
-
 local game = game
 
 --services here
@@ -98,9 +96,5 @@ function ChaosFunctions.string.random(Length)
     end
     return rstring
 end
-
-
-
-print("Script took: " .. os.clock() - StartTime)
 
 return ChaosFunctions -- returns the table with the functions on god cuh no cap fr fr
