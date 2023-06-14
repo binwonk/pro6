@@ -744,7 +744,7 @@ Store:AddDropdown("SelectOutfit",{
 })
 
 Options.SelectOutfit:OnChanged(function(value)
-	if value ~= "--" or value ~= "" or value ~= nil or value ~= "nil" then
+	if value ~= "--" and value ~= "" and value ~= nil and value ~= "nil" then
 		local args = {
 			[1] = "Equip",
 			[2] = {
