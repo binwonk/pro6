@@ -562,8 +562,10 @@ Teleport:AddDropdown("TeleportsDropdown",{
 Options.TeleportsDropdown:OnChanged(function(str)
 	if str ~= "" then
 		str = ROWizardValues["TeleportTable2"][str]
-		str = CFrame.new(table.unpack(str:gsub(" ",""):split(",")))
-		ROWizardValues["LocationSelected"] = str
+		if typeof(str) == "string" then
+			str = CFrame.new(table.unpack(str:gsub(" ",""):split(",")))
+			ROWizardValues["LocationSelected"] = str
+		end
 	end
 end)
 
