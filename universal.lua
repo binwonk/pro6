@@ -1,358 +1,762 @@
 local StartTime = os.clock()
 
-local ScriptVersion = "0.0.1"
+local ScriptVersion = 1
 
 local game = game
 local wait = task.wait
 
-repeat wait() until game:IsLoaded()
+repeat
+	wait()
+until game:IsLoaded()
 
-math.randomseed(tick())
 
 -- SERVICES HERE
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local TeleportService = game:GetService("TeleportService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
-local CoreGui = game:GetService("CoreGui")
 
 -- LOCAL VARIABLES HERE
 local Player = Players.LocalPlayer
+local Modules = ReplicatedStorage:WaitForChild("Modules")
+local Spells = require(Modules:WaitForChild("Spell"))
+local Remote = Modules:WaitForChild("Network"):WaitForChild("RemoteEvent")
+local Effects = workspace:FindFirstChild("Effects")
 
-local repo = 'https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/'
-local Library = loadstring(game:HttpGet(repo .. 'Library.lua'))()
-local ThemeManager = loadstring(game:HttpGet(repo .. 'addons/ThemeManager.lua'))()
-local SaveManager = loadstring(game:HttpGet(repo .. 'addons/SaveManager.lua'))()
-local ChaosFunctions = loadstring(game:HttpGet("https://raw.githubusercontent.com/binwonk/pro6/main/misc/ChaosFunctions2.lua"))()
-local Notifications = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sw1ndlerScripts/RobloxScripts/main/Notification%20Library/main.lua"))()
-
-getgenv().BinsploitValues = {
-    ["Spoofs"] = {
-        ["SpoofWSJP"] = {
-            Value = false,
-            WalkSpeed = 16,
-            JumpPower = 50
-        }
-    },
-    ["ChatSpam"] = {
-        Delay = 1;
-    },
-    ["ToJoin"] = {
-        JobId = game.JobId,
-        PlaceId = game.PlaceId
-    },
-    ["AutoRejoin"] = nil;
+local ROWizardValues = {
+    ["ModWandToggle"] = false,
+	["AutoConfringo"] = false,
+	["BringPlayerTimeValue"] = 6,
+	["Connections"] = {
+		HoopAutofarm = nil;
+		PotionAutofarm = nil;
+		BookLag = nil;
+		AntiBookLag = nil;
+		FlingAll = nil;
+	},
+	["BooksToRemove"] = 0,
+	["OldIndexHook"] = nil,
+	["OldNamecallHook"] = nil,
+	["FakeBring"] = {
+		PlayerToFake = nil;
+		PlayerToBring = nil;
+	},
+	["TeleportTable2"] = {
+		["Grand Hall"] = "-6.98583317, 3.26444864, -237.789932, 0.999627113, 3.01348657e-09, -0.0273053069, -2.85575763e-09, 1, 5.81549564e-09, 0.0273053069, -5.73534997e-09, 0.999627113",
+		["Serpents Common Room"] = "345.465912, -58.8441238, 312.809479, 0.996278286, 5.76638399e-08, -0.0861949921, -5.65189175e-08, 1, 1.57233e-08, 0.0861949921, -1.07931344e-08, 0.996278286",
+		["Badgers Common Room"] = "26.4316196, -148.428452, -224.473129, 0.0229754951, 5.64194746e-10, -0.999736011, 2.29062529e-08, 1, 1.09076526e-09, 0.999736011, -2.2925267e-08, 0.0229754951",
+		["Lions Common Room"] = "317.076294, 174.698257, -321.223083, 0.873360097, -5.84550985e-09, -0.48707512, -1.30239126e-08, 1, -3.5354045e-08, 0.48707512, 3.72204347e-08, 0.873360097",
+		["Ravens Common Room"] = "872.183838, 234.559326, -147.583115, 0.997416735, 6.57174704e-10, -0.071832329, -1.3341096e-09, 1, -9.37584144e-09, 0.071832329, 9.4474526e-09, 0.997416735",
+		["Duelling Arena"] = "-748.834106, -107.285576, -444.290924, -0.955545008, 3.22644524e-08, -0.294845313, 4.96480101e-09, 1, 9.33383006e-08, 0.294845313, 8.77250983e-08, -0.955545008",
+		["Azkaban Outside"] = "-938.264771, 973.247803, 2759.89624, -0.89939636, 4.38394565e-09, 0.437134057, 1.21720625e-08, 1, 1.50149884e-08, -0.437134057, 1.88252489e-08, -0.89939636",
+		["Azkaban Inside"] = "-1006.8493, 973.002991, 2906.17676, -0.929947078, -5.77469406e-09, 0.367693365, 2.80315171e-09, 1, 2.27947456e-08, -0.367693365, 2.22286083e-08, -0.929947078"
+	},
+	["TeleportTable"] = {
+		"Grand Hall",
+		"Serpents Common Room",
+		"Badgers Common Room",
+		"Lions Common Room",
+		"Ravens Common Room",
+		"Duelling Arena",
+		"Azkaban Outside",
+		"Azkaban Inside"
+	},
+	["LocationSelected"] = nil,
+	["PlayerToTeleport"] = Player,
+	["ROWizardOutfits"] = require(Modules:WaitForChild("Outfits")),
+	["ROWizardOutfitsTable"] = {},
+	["StoreGemsTable"] = {}
 }
 
-getgenv().BinsploitNotify = function(Title,Text,Time,Prompt,PromptY,PromptN)
-    if not Time then Time = 3 end
-    if Prompt then
-        Notifications:CreatePromptNotif({
-            TweenSpeed = 1,
-            Title = "Placeholder",
-            Text = "Placeholder",
-            Duration = 3,
-            Callback = function(value)
-                print(value)
-            end
-        })
-    else
-        Notifications:CreateDefaultNotif({
-            TweenSpeed = 1,
-            Title = Title,
-            Text = Text,
-            Duration = Time
-        })
-    end
+for i,v in next,ReplicatedStorage:WaitForChild("Outfits"):GetChildren() do
+	local ToAddToTable = v.Name:gsub(" ", "")
+	table.insert(ROWizardValues["ROWizardOutfitsTable"],ToAddToTable)
 end
 
---HOOKS HERE
+local ChaosFunctions = loadstring(game:HttpGet("https://raw.githubusercontent.com/binwonk/pro6/main/misc/ChaosFunctions2.lua"))()
 
-local oldnc;
-local oldind;
-local oldnind;
+-- HOOKS HERE
 
-oldnind = hookmetamethod(game,"__newindex",function(self,...)
-    local args = {...}
-    if (not checkcaller() and self:IsA("Humanoid")) and (args[1] == "WalkSpeed" or args[1] == "JumpPower") and BinsploitValues.Spoofs.SpoofWSJP.Value == true then
-        BinsploitValues.Spoofs.SpoofWSJP[args[1]] = args[2]
+ROWizardValues["OldNamecallHook"] = hookmetamethod(game,"__namecall",function(self,...)
+	local args = {...}
+	if not checkcaller() and tostring(self) == "RemoteEvent" and getnamecallmethod() == "FireServer" then
+		if args[1] == "HandleDamage" and args[2]["Type"] == "Explosive" then
+			if args[2]["SpellName"] == "confringo" and ROWizardValues["AutoConfringo"] then
+				args[2]["SpellName"] = "fiendfyre"
+				return ROWizardValues["OldNamecallHook"](self,unpack(args))
+			end
+		end
+	end
+	return ROWizardValues["OldNamecallHook"](self,unpack(args))
+end)
+
+--GAME SCRIPT HERE
+local Combat = Tabs.Game:AddLeftGroupbox("Combat")
+
+Combat:AddInput("KillPlayer", {
+	Numeric = false,
+	Finished = true,
+	Text = "Kill Player",
+	Tooltip = "Kills a player!",
+	Placeholder = "Player name here!"
+})
+
+Options.KillPlayer:OnChanged(function(value)
+    if tostring(value) == "" then
         return
     end
-    return oldnind(self,...)
+	local KillPlayer = ChaosFunctions.stringToPlayer(value)
+	if KillPlayer.Character and KillPlayer.Character:FindFirstChild("Head") then
+		for i = 1, 6 do
+			local args = {
+				[1] = "HandleDamage",
+				[2] = {
+					["Character"] = KillPlayer.Character,
+					["Hit"] = KillPlayer.Character.Head,
+					["Type"] = "Normal",
+					["Norm"] = Vector3.new(0.7755845785140991, 0.035323500633239746, -0.6302545070648193),
+					["Pos"] = Vector3.new(-731.4620971679688, -108.57284545898438, -495.60650634765625),
+					["SpellName"] = "stupefy"
+				}
+			}
+			Remote:FireServer(unpack(args))
+		end
+	end
 end)
 
-oldind = hookmetamethod(game, "__index", function(self,...)
-    local args = {...}
-    if (not checkcaller() and self:IsA("Humanoid")) and (args[1] == "WalkSpeed" or args[1] == "JumpPower") and BinsploitValues.Spoofs.SpoofWSJP.Value == true then
-        return BinsploitValues.Spoofs.SpoofWSJP[args[1]]
-    end
-    return oldind(self,...)
+Combat:AddToggle("AutoCon",{
+	Text = "Auto 40 Damage Confringo",
+	Default = false,
+	Tooltip = "All your confringos will automatically deal 40 damage, rather than the normal 20!"
+})
+
+Toggles.AutoCon:OnChanged(function(value)
+	ROWizardValues["AutoConfringo"] = value
 end)
 
--- MAIN SCRIPT HERE
-getgenv().V6 = Library:CreateWindow({
-    Title = "Quintessence - Version 0.0.1 - Alpha",
-    Center = true,
-    AutoShow = true,
-    TabPadding = 8
-})
-
-getgenv().Tabs = {
-    Universal = V6:AddTab("Universal"),
-    Game = V6:AddTab("Game"),
-    ["UI Settings"] = V6:AddTab("UI Settings")
-}
-
-local UniversalMisc = Tabs.Universal:AddLeftGroupbox("Misc")
-
-UniversalMisc:AddButton({
-    Text = "Rejoin",
-    Tooltip = "Rejoins the server you're currently in!",
-    Func = function()
-        if #(Players:GetPlayers()) > 1 then
-            TeleportService:TeleportToPlaceInstance(game.PlaceId,game.JobId,Player)
-        else
-            Player:Kick("Rejoining, please wait!")
-            wait()
-            TeleportService:TeleportToPlaceInstance(game.PlaceId,game.JobId,Player)
-        end
-    end
-})
-
-UniversalMisc:AddButton({
-    Text = "Serverhop",
-    Tooltip = "Finally a serverhop I didn't skid!",
-    Func = function()
-        local Servers = {}
-        local ServerData = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/" .. tostring(game.PlaceId) .. "/servers/Public?sortOrder=Asc&limit=100"))
-        for i,v in next,ServerData.data do
-            if v.id ~= game.JobId and v.playing ~= v.maxPlayers then
-                Servers[#Servers+1] = v.id
-            end
-        end
-        if #Servers > 0 then
-            TeleportService:TeleportToPlaceInstance(game.PlaceId, Servers[math.random(1,#Servers)], Player)
-        end
-    end
-})
-
-UniversalMisc:AddToggle("AutoRejoin",{
-    Text = "Auto Rejoin",
-    Tooltip = "With this enabled, you'll rejoin everytime you get kicked!",
+Combat:AddToggle("ModWand", {
+    Text = "Mod Wand",
     Default = false
 })
 
-Toggles.AutoRejoin:OnChanged(function(value)
+local ModWandConnection = nil;
+local ModWandTable = {}
+
+Toggles.ModWand:OnChanged(function(value)
     if value then
-        if typeof(BinsploitValues["AutoRejoin"]) == "RBXScriptConnection" then
-            BinsploitValues["AutoRejoin"]:Disconnect()
-        end
-        BinsploitValues["AutoRejoin"] = CoreGui:FindFirstChild("RobloxPromptGui"):FindFirstChild("promptOverlay").ChildAdded:Connect(function(child)
-            if child.Name == "ErrorPrompt" and child:FindFirstChild("MessageArea") and child:FindFirstChild("MessageArea"):FindFirstChild("ErrorFrame") then
-                TeleportService:TeleportToPlaceInstance(game.PlaceId,game.JobId,Player)
+        ModWandTable = {}
+        for i,v in next,Spells.Spells do
+			ModWandTable[v] = {}
+            for x,d in next,v do
+                ModWandTable[v][x] = d
             end
+		end
+        for i,v in next,Spells.Spells do
+			v.MaxCharges = 10000
+			v.Charges = 10000
+			v.Range = 10000
+			v.Safe = true
+			v.ChargeCooldown = 0.01
+			v.Cooldown = 0
+		end
+        ModWandConnection = RunService.Stepped:Connect(function()
+            for i,v in next,Spells.Spells do
+				if v.MaxCharges < 100 then
+					v.MaxCharges = 10000
+				end
+				if v.Charges < 100 then
+					v.Charges = 10000
+				end
+				if v.Safe == false then
+					v.Safe = true
+				end
+				if v.Cooldown > 0 then
+					v.Cooldown = 0
+				end
+				if v.ChargeCooldown > 0.02 then
+					v.ChargeCooldown = 0.01
+				end
+			end
         end)
     else
-        if typeof(BinsploitValues["AutoRejoin"]) == "RBXScriptConnection" then
-            BinsploitValues["AutoRejoin"]:Disconnect()
+        if typeof(ModWandConnection) == "RBXScriptConnection" then
+            ModWandConnection:Disconnect()
+			BinsploitNotify("Toggle currently work in progress!","Try again soon.",3)
+            --[[for i,v in next,ModWandTable do
+				Spells.Spells[i] = v
+                for x,d in next,v do
+                    Spells.Spells[i][x] = d
+                end
+            ]]--
         end
     end
 end)
 
-UniversalMisc:AddButton({
-    Text = "Invite players",
-    Tooltip = "Sets your clipboard to a script that people can execute to join your game!",
-    Func = function()
-        setclipboard("-- Use this script to join me ingame!\n" .. [[game:GetService("TeleportService"):TeleportToPlaceInstance(]] .. tostring(game.PlaceId) .. "," .. [["]] .. tostring(game.JobId) .. [["]] .. [[,game:GetService("Players").LocalPlayer)]])
-    end
+local Autofarming = Tabs.Game:AddLeftGroupbox("Autofarms")
+
+Autofarming:AddToggle("HoopAutofarm",{
+	Text = "Hoop Autofarm",
+    Default = false,
+	Tooltip = "Autofarms hoops to get XP!"
 })
 
-UniversalMisc:AddButton({
-    Text = "Invite players (Javascript)",
-    Tooltip = "Sets your clipboard to Javascript people can execute in their browser's console (CTRL+Shift+I) to join your game!",
-    Func = function()
-        setclipboard("Roblox.GameLauncher.joinGameInstance(" .. tostring(game.PlaceId) .. ",".. [["]] .. tostring(game.JobId) .. [["]] .. ")")
-    end
-})
-
-UniversalMisc:AddInput("JobIdJoin",{
-    Text = "Join By JobId",
-    Numeric = false,
-    Finished = true,
-    Tooltip = "Requires PlaceId to be entered below! (unless it's the same game, in which case just click join server!)",
-    Placeholder = "Enter JobId here!"
-})
-
-Options.JobIdJoin:OnChanged(function(value)
-    if value ~= "" then
-        BinsploitValues["ToJoin"]["JobId"] = value
-    else
-        BinsploitValues["ToJoin"]["JobId"] = game.JobId
-    end
+Toggles.HoopAutofarm:OnChanged(function(value)
+	if value then
+		if typeof(ROWizardValues["Connections"]["HoopAutofarm"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["HoopAutofarm"]:Disconnect()
+		end
+		ROWizardValues["Connections"]["HoopAutofarm"] = RunService.Heartbeat:Connect(function()
+			for i,v in next,Effects:GetChildren() do
+				if v.Name == "Hoop" and Player.Character and Player.Character:FindFirstChild("Head") then
+					firetouchinterest(Player.Character:FindFirstChild("Head"),v,0)
+					task.wait()
+					firetouchinterest(Player.Character:FindFirstChild("Head"),v,1)
+				end
+			end
+		end)
+	else
+		if typeof(ROWizardValues["Connections"]["HoopAutofarm"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["HoopAutofarm"]:Disconnect()
+		end
+	end
 end)
 
-UniversalMisc:AddInput("PlaceIdJoin",{
-    Text = "Join By PlaceId",
-    Numeric = false,
-    Finished = true,
-    Tooltip = "Requires JobId to be entered above! (click join server when you're done!)",
-    Placeholder = "Enter PlaceId here!"
+Autofarming:AddToggle("PotionAutofarm",{
+	Text = "Potion Autofarm",
+	Default = false,
+	Tooltip = "Autofarms potions to get XP!"
 })
 
-Options.PlaceIdJoin:OnChanged(function(value)
-    if value ~= "" then
-        BinsploitValues["ToJoin"]["PlaceId"] = tonumber(value)
-    else
-        BinsploitValues["ToJoin"]["PlaceId"] = game.PlaceId
-    end
+Toggles.PotionAutofarm:OnChanged(function(value)
+	if value then
+		if typeof(ROWizardValues["Connections"]["PotionAutofarm"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["PotionAutofarm"]:Disconnect()
+		end
+		ROWizardValues["Connections"]["PotionAutofarm"] = RunService.Heartbeat:Connect(function()
+			local args = {[1] = "Bottle", [2] = {[1] = {["Color"] = nil --[[Color3]],["MaxAmount"] = 5,["Name"] = "Filofia Mushroom",["Amount"] = 5},[2] = {} --[[DUPLICATE]],[3] = {["Color"] = nil --[[Color3]],["MaxAmount"] = 10,["Name"] = "Pumpkin Juice",["Amount"] = 7},[4] = {["Color"] = nil --[[Color3]],["MaxAmount"] = 5,["Name"] = "Honey",["Amount"] = 5}}}
+			args[2][2] = args[2][1]
+			Remote:FireServer(unpack(args))
+		end)
+	else
+		if typeof(ROWizardValues["Connections"]["PotionAutofarm"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["PotionAutofarm"]:Disconnect()
+		end
+	end
 end)
 
-UniversalMisc:AddButton({
-    Text = "Join Server",
-    Tooltip = "Make sure you've entered the JobId and PlaceId above!",
-    Func = function()
-        TeleportService:TeleportToPlaceInstance(BinsploitValues["ToJoin"]["PlaceId"],BinsploitValues["ToJoin"]["PlaceId"],Player)
-    end
+local Misc = Tabs.Game:AddRightGroupbox("Misc")
+
+Misc:AddInput("BringPlayer", {
+	Numeric = false,
+	Finished = true,
+	Text = "Bring Player",
+	Tooltip = "Brings a player!",
+	Placeholder = "Player name here!"
 })
 
-local UniversalLocalPlayer = Tabs.Universal:AddRightGroupbox("LocalPlayer")
-
-UniversalLocalPlayer:AddSlider("WalkSpeed", {
-    Text = "WalkSpeed Slider",
-    Default = 16,
-    Min = 0,
-    Max = 1024,
-    Rounding = 0,
-    Compact = false
-})
-
-Options.WalkSpeed:OnChanged(function(value)
-    if Player.Character and Player.Character:FindFirstChildOfClass("Humanoid") then
-        Player.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = value
-    end
+Options.BringPlayer:OnChanged(function(value)
+	if value == "" then
+		return
+	end
+	local KillPlayer = ChaosFunctions.stringToPlayer(value)
+	if KillPlayer.Character and KillPlayer.Character:FindFirstChild("Head") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+		spawn(function()
+			if KillPlayer.Character then
+				local v109 = KillPlayer.Character:FindFirstChild("Head")
+				if v109 then
+				local args = {
+					[1] = "WingardiumToggle",
+					[2] = v109,
+					[3] = true
+				}
+				Remote:FireServer(unpack(args))
+				local v114 = Instance.new("BodyPosition");
+				v114.MaxForce = Vector3.new(math.huge, math.huge, math.huge);
+				v114.Position = v109.Parent:FindFirstChild("HumanoidRootPart").Position
+				v114.Parent = v109;
+				v114.D = 100;
+				local u34 = RunService.Stepped:Connect(function()
+					if Player.Character:FindFirstChild("HumanoidRootPart") and v109 then
+						v114.Position = Player.Character:FindFirstChild("HumanoidRootPart").Position + Vector3.new(0,0,-5)
+					end
+				end)
+				wait(ROWizardValues["BringPlayerTimeValue"]);
+				u34:Disconnect();
+				v114:Destroy();
+					if v109 then
+						local args = {
+							[1] = "WingardiumToggle",
+							[2] = v109,
+							[3] = false
+						}
+						Remote:FireServer(unpack(args))
+					end
+				end
+			end
+		end)
+	end
 end)
 
-UniversalLocalPlayer:AddInput("CustomWalkSpeed", {
-    Text = "WalkSpeed Textbox",
-    Numeric = true,
-    Finished = true,
-    Tooltip = "Numbers only!",
-    Placeholder = "Custom WalkSpeed here!"
+Misc:AddSlider("BringPlayerTime", {
+	Text = "Bring Player Length",
+	Default = 6,
+	Min = 0,
+	Max = 120,
+	Rounding = 0,
+	Compact = false,
+	Tooltip = "In seconds!"
 })
 
-Options.CustomWalkSpeed:OnChanged(function(value)
-    if Player.Character and Player.Character:FindFirstChildOfClass("Humanoid") then
-        Options.WalkSpeed:SetValue(value)
-        Player.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = value
-    end
+Options.BringPlayerTime:OnChanged(function(value)
+    ROWizardValues["BringPlayerTimeValue"] = value
 end)
 
-Options.WalkSpeed:SetValue(16)
-Options.CustomWalkSpeed:SetValue(16)
-
-UniversalLocalPlayer:AddSlider("JumpPower",{
-    Text = "JumpPower Slider",
-    Default = 50,
-    Min = 0,
-    Max = 1000,
-    Rounding = 0,
-    Compact = false
+Misc:AddInput("KillPlayerAlt", {
+	Numeric = false,
+	Finished = true,
+	Text = "Kill Player Alternate",
+	Tooltip = "Kills a player in a different way!",
+	Placeholder = "Player name here!"
 })
 
-Options.JumpPower:OnChanged(function(value)
-    if Player.Character and Player.Character:FindFirstChildOfClass("Humanoid") then
-        if Player.Character:FindFirstChildOfClass("Humanoid").UseJumpPower == false then
-            Player.Character:FindFirstChildOfClass("Humanoid").UseJumpPower = true
-        end
-        Player.Character:FindFirstChildOfClass("Humanoid").JumpPower = value
-    end
+Options.KillPlayerAlt:OnChanged(function(value)
+	if value == "" then
+		return
+	end
+	local KillPlayer = ChaosFunctions.stringToPlayer(value)
+	if KillPlayer.Character and KillPlayer.Character:FindFirstChild("Head") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+		spawn(function()
+			if KillPlayer.Character then
+				local v109 = KillPlayer.Character:FindFirstChild("Head")
+				if v109 then
+				local args = {
+					[1] = "WingardiumToggle",
+					[2] = v109,
+					[3] = true
+				}
+				Remote:FireServer(unpack(args))
+				local v114 = Instance.new("BodyPosition");
+				v114.MaxForce = Vector3.new(math.huge, math.huge, math.huge);
+				v114.Position = v109.Parent:FindFirstChild("HumanoidRootPart").Position
+				v114.Parent = v109;
+				v114.D = 100;
+				local u34 = RunService.Stepped:Connect(function()
+					if v114 and v109 then
+						v114.Position = Vector3.new(0,workspace.FallenPartsDestroyHeight + 5,0)
+					end
+				end)
+				wait(1.5);
+				u34:Disconnect();
+				v114:Destroy();
+					if v109 then
+						local args = {
+							[1] = "WingardiumToggle",
+							[2] = v109,
+							[3] = false
+						}
+						Remote:FireServer(unpack(args))
+					end
+				end
+			end
+		end)
+	end
 end)
 
-UniversalLocalPlayer:AddInput("GotoPlayer",{
-    Text = "Teleport To Player",
-    Numeric = false,
-    Finished = true,
-    Tooltip = "Teleports you to a player!",
-    Placeholder = "Enter player name here!"
+Misc:AddToggle("BookLag",{
+	Text = "Lag Server",
+    Default = false,
+	Tooltip = "Spam equips books to lag the server!"
 })
 
-Options.GotoPlayer:OnChanged(function(value)
-    if value == "" then
+Toggles.BookLag:OnChanged(function(value)
+	if value then
+		if typeof(ROWizardValues["Connections"]["BookLag"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["BookLag"]:Disconnect()
+		end
+		ROWizardValues["BooksToRemove"] = 0
+		ROWizardValues["Connections"]["BookLag"] = RunService.Heartbeat:Connect(function()
+			if Player.Character then
+				Remote:FireServer(unpack({[1] = "ToggleBook",[2] = {["Name"] = "binsploit on TOP",["Color"] = nil},[3] = true}))
+			end
+			ROWizardValues["BooksToRemove"] = ROWizardValues["BooksToRemove"] + 1;
+		end)
+	else
+		if typeof(ROWizardValues["Connections"]["BookLag"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["BookLag"]:Disconnect()
+		end
+		for i = 1,ROWizardValues["BooksToRemove"] do
+			Remote:FireServer(unpack({[1] = "ToggleBook",[2] = {["Name"] = "binsploit on TOP",["Color"] = nil},[3] = false}))
+			task.wait()
+		end
+	end
+end)
+
+Misc:AddToggle("AntiBL",{
+	Text = "Anti-Book Lag",
+	Default = false,
+	Tooltip = "Prevents people including yourself lagging your game! (CLIENT)"
+})
+
+Toggles.AntiBL:OnChanged(function(value)
+	if value then
+		for i,v in next,Players:GetPlayers() do
+			if v.Character and v.Character:FindFirstChild("BookHolding") then
+				for x,d in next,v.Character:GetChildren() do
+					if d.Name == "BookHolding" then
+						d:Destroy()
+					end
+				end
+			end
+		end
+		if typeof(ROWizardValues["Connections"]["AntiBookLag"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["AntiBookLag"]:Disconnect()
+		end
+		ROWizardValues["Connections"]["AntiBookLag"] = RunService.Heartbeat:Connect(function()
+			for i,v in next,Players:GetPlayers() do
+				if v.Character and v.Character:FindFirstChild("BookHolding") then
+					v.Character:FindFirstChild("BookHolding"):Destroy()
+				end
+			end
+		end)
+	else
+		if typeof(ROWizardValues["Connections"]["AntiBookLag"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["AntiBookLag"]:Disconnect()
+		end
+		for i,v in next,Players:GetPlayers() do
+			if v.Character and v.Character:FindFirstChild("BookHolding") then
+				for x,d in next,v.Character:GetChildren() do
+					if d.Name == "BookHolding" then
+						d:Destroy()
+					end
+				end
+			end
+		end
+	end
+end)
+
+Misc:AddToggle("FlingAll",{
+	Text = "Fling All",
+	Default = false,
+	Tooltip = "Flings everyone in the server!"
+})
+
+Toggles.FlingAll:OnChanged(function(value)
+	if value then
+		if typeof(ROWizardValues["Connections"]["FlingAll"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["FlingAll"]:Disconnect()
+		end
+		ROWizardValues["Connections"]["FlingAll"] = RunService.Heartbeat:Connect(function()
+			for i, v in next,game:GetService("Players"):GetPlayers() do
+				if v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v ~= game:GetService("Players").LocalPlayer then
+					local args = {
+						[1] = "HandleDamage",
+						[2] = {
+							["Type"] = "Normal",
+							["Hit"] = v.Character.HumanoidRootPart,
+							["Norm"] = Vector3.new(math.huge, math.huge, math.huge),
+							["Pos"] = v.Character.HumanoidRootPart.Position,
+							["SpellName"] = "levicorpus"
+						}
+					}
+					game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+				end
+			end
+		end)
+	else
+		if typeof(ROWizardValues["Connections"]["FlingAll"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["FlingAll"]:Disconnect()
+		end
+	end
+end)
+
+Misc:AddToggle("FlingAllAlt",{
+	Text = "Fling All (Alt)",
+	Default = false,
+	Tooltip = "An alternate way of flinging everyone!"
+})
+
+Toggles.FlingAllAlt:OnChanged(function(value)
+	if value then
+		BinsploitNotify("Feature currently in development!", "Try again later!", 3)
+	end
+end)
+
+Misc:AddInput("FlingPlayerAlt",{
+	Text = "Fling Player",
+	Tooltip = "Flings a player!",
+	Placeholder = "Player name here!",
+	Numeric = false,
+	Finished = true
+})
+
+Options.FlingPlayerAlt:OnChanged(function(value)
+	if tostring(value) == "" then
         return
     end
-    value = ChaosFunctions.stringToPlayer(value)
-    if value then
-        if value.Character and value.Character:FindFirstChild("HumanoidRootPart") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-            Player.Character:FindFirstChild("HumanoidRootPart").CFrame = value.Character:FindFirstChild("HumanoidRootPart").Position
-        end
+	local KillPlayer = ChaosFunctions.stringToPlayer(value)
+	local TrollPlayer = ChaosFunctions.stringToPlayer(value)
+	if KillPlayer and TrollPlayer then
+		if KillPlayer.Character and KillPlayer.Character:FindFirstChild("Head") and TrollPlayer.Character and TrollPlayer.Character:FindFirstChild("HumanoidRootPart") then
+			spawn(function()
+				if KillPlayer.Character then
+					local v109 = KillPlayer.Character:FindFirstChild("Head")
+					if v109 then
+						local args = {
+							[1] = "WingardiumToggle",
+							[2] = v109,
+							[3] = true
+						}
+						Remote:FireServer(unpack(args))
+						local v114 = Instance.new("BodyPosition");
+						v114.MaxForce = Vector3.new(math.huge, math.huge, math.huge);
+						v114.Position = v109.Parent:FindFirstChild("HumanoidRootPart").Position
+						v114.Parent = v109;
+						v114.D = 100;
+						local u34 = RunService.Stepped:Connect(function()
+							if TrollPlayer.Character:FindFirstChild("HumanoidRootPart") and v109 then
+								v114.Position = TrollPlayer.Character:FindFirstChild("HumanoidRootPart").Position + Vector3.new(0,0,-5)
+							end
+						end)
+						wait(6);
+						u34:Disconnect();
+						v114:Destroy();
+						if v109 then
+							local args = {
+								[1] = "WingardiumToggle",
+								[2] = v109,
+								[3] = false
+							}
+							Remote:FireServer(unpack(args))
+						end
+					end
+				end
+			end)
+		end
+	end
+end)
+
+local Blame = Tabs.Game:AddRightGroupbox("PLACEHOLDER NAME")
+
+Blame:AddInput("FakeUser",{
+	Numeric = false,
+	Finished = true,
+	Text = "Player to bring to!",
+	Tooltip = "PLACEHOLDER",
+	Placeholder = "Player name here!"
+})
+
+Options.FakeUser:OnChanged(function(value)
+	if tostring(value) == "" then
+        return
     end
+	local FakeBring = ChaosFunctions.stringToPlayer(value)
+	if FakeBring then
+		ROWizardValues["FakeBring"]["PlayerToFake"] = FakeBring
+	end
 end)
 
-local UniversalSpoofs = Tabs.Universal:AddRightGroupbox("Spoofs & Bypasses")
-
-UniversalSpoofs:AddToggle("SpoofWSJP",{
-    Text = "Spoof WalkSpeed & JumpPower",
-    Default = false
+Blame:AddInput("FakeUserBring",{
+	Numeric = false,
+	Finished = true,
+	Text = "Player to bring!",
+	Tooltip = "PLACEHOLDER",
+	Placeholder = "Player name here!"
 })
 
-Toggles.SpoofWSJP:OnChanged(function(value)
-    BinsploitValues.Spoofs.SpoofWSJP.Value = value
+Options.FakeUserBring:OnChanged(function(value)
+	if tostring(value) == "" then
+        return
+    end
+	local FakeBring = ChaosFunctions.stringToPlayer(value)
+	if FakeBring then
+		ROWizardValues["FakeBring"]["PlayerToBring"] = FakeBring
+	end
 end)
 
-local UniversalChatSpam = Tabs.Universal:AddRightGroupbox("Chat Spam")
-
-UniversalChatSpam:AddSlider("ChatSpamDelay",{
-    Text = "ChatSpam Delay",
-    Default = 1,
-    Min = 0,
-    Max = 100,
-    Rounding = 1,
-    Compact = false,
-    Tooltip = "How long should ChatSpam wait before sending the next message?"
+Blame:AddButton({
+	Text = "Do the thing!",
+	Tooltip = "DON'T DO THIS UNLESS MY FEATURE NAMES ARE CLEAR ENOUGH",
+	Func = function()
+		local KillPlayer = ROWizardValues["FakeBring"]["PlayerToBring"]
+		local TrollPlayer = ROWizardValues["FakeBring"]["PlayerToFake"]
+		if KillPlayer.Character and KillPlayer.Character:FindFirstChild("Head") and TrollPlayer.Character and TrollPlayer.Character:FindFirstChild("HumanoidRootPart") then
+			spawn(function()
+				if KillPlayer.Character then
+					local v109 = KillPlayer.Character:FindFirstChild("Head")
+					if v109 then
+					local args = {
+						[1] = "WingardiumToggle",
+						[2] = v109,
+						[3] = true
+					}
+					Remote:FireServer(unpack(args))
+					local v114 = Instance.new("BodyPosition");
+					v114.MaxForce = Vector3.new(math.huge, math.huge, math.huge);
+					v114.Position = v109.Parent:FindFirstChild("HumanoidRootPart").Position
+					v114.Parent = v109;
+					v114.D = 100;
+					local u34 = RunService.Stepped:Connect(function()
+						if TrollPlayer.Character:FindFirstChild("HumanoidRootPart") and v109 then
+							v114.Position = TrollPlayer.Character:FindFirstChild("HumanoidRootPart").Position + Vector3.new(0,0,-5)
+						end
+					end)
+					wait(6);
+					u34:Disconnect();
+					v114:Destroy();
+						if v109 then
+							local args = {
+								[1] = "WingardiumToggle",
+								[2] = v109,
+								[3] = false
+							}
+							Remote:FireServer(unpack(args))
+						end
+					end
+				end
+			end)
+		end
+	end
 })
 
-Options.ChatSpamDelay:OnChanged(function(value)
-    BinsploitValues["ChatSpam"]["ChatSpamDelay"] = value
-end)
+local Teleport = Tabs.Game:AddRightGroupbox("Teleports")
 
-local UniversalChatSpy = Tabs.Universal:AddRightGroupbox("ChatSpy")
-
-UniversalChatSpy:AddToggle("CSEnabled",{
-    Text = "ChatSpy Enabled",
-    Default = false,
-    Tooltip = "Disables/Enables chatspy!"
+Teleport:AddDropdown("TeleportsDropdown",{
+	Values = ROWizardValues["TeleportTable"],
+	Text = "Teleports Dropdown",
+	Tooltip = "Select a location, then click the teleport button below!",
+	AllowNull = true
 })
 
-Toggles.CSEnabled:OnChanged(function(value)
-    BinsploitNotify("Notification!","ChatSpy currently in development!",3)
+Options.TeleportsDropdown:OnChanged(function(str)
+	if str ~= "" then
+		str = ROWizardValues["TeleportTable2"][str]
+		if typeof(str) == "string" then
+			str = CFrame.new(table.unpack(str:gsub(" ",""):split(",")))
+			ROWizardValues["LocationSelected"] = str
+		end
+	else
+		return
+	end
 end)
 
--- load game specific script
+Teleport:AddButton({
+	Text = "Teleport!",
+	Tooltip = "Teleports to the location selected above! Doesn't work with other players YET!",
+	Func = function()
+		if ROWizardValues["PlayerToTeleport"].Character and ROWizardValues["PlayerToTeleport"].Character:FindFirstChild("HumanoidRootPart") then
+			if ROWizardValues["PlayerToTeleport"] == Player then
+				ROWizardValues["PlayerToTeleport"].Character:FindFirstChild("HumanoidRootPart").CFrame = ROWizardValues["LocationSelected"]
+			else
+				local KillPlayer = ROWizardValues["PlayerToTeleport"]
+				local TrollPlayer = ROWizardValues["PlayerToTeleport"]
+				if KillPlayer.Character and KillPlayer.Character:FindFirstChild("Head") and TrollPlayer.Character and TrollPlayer.Character:FindFirstChild("HumanoidRootPart") then
+					spawn(function()
+						if KillPlayer.Character then
+							local v109 = KillPlayer.Character:FindFirstChild("Head")
+							if v109 then
+							local args = {
+								[1] = "WingardiumToggle",
+								[2] = v109,
+								[3] = true
+							}
+							Remote:FireServer(unpack(args))
+							local v114 = Instance.new("BodyPosition");
+							v114.MaxForce = Vector3.new(math.huge, math.huge, math.huge);
+							v114.Position = v109.Parent:FindFirstChild("HumanoidRootPart").Position
+							v114.Parent = v109;
+							v114.D = 100;
+							local u34 = RunService.Stepped:Connect(function()
+								if TrollPlayer.Character:FindFirstChild("HumanoidRootPart") and v109 then
+									v114.Position = Vector3.new(ROWizardValues["LocationSelected"])
+								end
+							end)
+							wait(6);
+							u34:Disconnect();
+							v114:Destroy();
+								if v109 then
+									local args = {
+										[1] = "WingardiumToggle",
+										[2] = v109,
+										[3] = false
+									}
+									Remote:FireServer(unpack(args))
+								end
+							end
+						end
+					end)
+				end
+			end
+		end
+	end
+})
 
-local suc,err = pcall(function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/binwonk/pro6/main/games/" .. tostring(game.GameId) .. "/" .. tostring(game.PlaceId) .. ".lua"))()
+Teleport:AddInput("TeleportSelector",{
+	Text = "Player to teleport",
+	Tooltip = "Optional! Leave blank for self/type in self/type in your own username to teleport yourself! (autofills)",
+	Placeholder = "Player name here!",
+	Numeric = false,
+	Finished = true
+})
+
+Options.TeleportSelector:OnChanged(function(value)
+	if value == "" or value == "self" then
+		ROWizardValues["PlayerToTeleport"] = Player
+		return
+	end
+	TOTP = ChaosFunctions.stringToPlayer(value)
+	if TOTP then
+		ROWizardValues["PlayerToTeleport"] = TOTP
+	end
 end)
 
-if err then print(err) end
+local Store = Tabs.Game:AddLeftGroupbox("Store")
 
-local MenuGroup = Tabs['UI Settings']:AddLeftGroupbox('Menu')
+Store:AddToggle("FreeStoreToggle",{
+	Text = "Free Store",
+	Tooltip = "When enabled, all prices in the store are ALMOST free! (You need 1 gem to purchase.)",
+	Default = false
+})
 
--- I set NoUI so it does not show up in the keybinds menu
-MenuGroup:AddButton('Unload', function() Library:Unload() end)
-MenuGroup:AddLabel('Menu bind'):AddKeyPicker('MenuKeybind', { Default = 'End', NoUI = true, Text = 'Menu keybind' })
+Toggles.FreeStoreToggle:OnChanged(function(value)
+	if value then
+		ROWizardValues["StoreGemsTable"] = {}
+		for i, v in next,getgc(true) do
+			if type(v) == "table" and rawget(v, "Gems") and rawget(v, "Rarity") then
+				ROWizardValues["StoreGemsTable"][v.Name] = v.Gems
+				v.Gems = 0.00000001
+			end
+		end
+	else
+		for i, v in next,getgc(true) do
+			if type(v) == "table" and rawget(v, "Gems") and rawget(v, "Rarity") then
+				v.Gems = ROWizardValues["StoreGemsTable"][v.Name]
+			end
+		end
+	end
+end)
 
-Library.ToggleKeybind = Options.MenuKeybind -- Allows you to have a custom keybind for the menu
+Store:AddDropdown("SelectOutfit",{
+	Text = "Equip Outfit",
+	Tooltip = "Equips an outfit! (some unobtainable outfits in there too)",
+	Values = ROWizardValues["ROWizardOutfitsTable"],
+	AllowNull = true
+})
 
--- yes, i copypasted that, and i will not edit it either
-
-ThemeManager:SetLibrary(Library)
-SaveManager:SetLibrary(Library)
-SaveManager:IgnoreThemeSettings()
-SaveManager:SetIgnoreIndexes({"MenuKeybind"})
-ThemeManager:SetFolder("Quintessence")
-SaveManager:SetFolder("Quintessence/testing")
-SaveManager:BuildConfigSection(Tabs["UI Settings"])
-ThemeManager:ApplyToTab(Tabs["UI Settings"])
-SaveManager:LoadAutoloadConfig()
-
-local EndTime = os.clock() - StartTime
+Options.SelectOutfit:OnChanged(function(value)
+	if value ~= "--" or value ~= "" or value ~= nil then
+		local args = {
+			[1] = "Equip",
+			[2] = {
+				["HouseColor"] = true,
+				["Name"] = "School Uniform",
+				["Owner"] = Player,
+				["OutfitName"] = value,
+				["Gems"] = 0.0000001,
+				["Type"] = "Outfit",
+				["Rarity"] = "Common"
+			}
+		}
+		Remote:FireServer(unpack(args))
+	end
+end)
