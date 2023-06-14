@@ -566,6 +566,8 @@ Options.TeleportsDropdown:OnChanged(function(str)
 			str = CFrame.new(table.unpack(str:gsub(" ",""):split(",")))
 			ROWizardValues["LocationSelected"] = str
 		end
+	else
+		return
 	end
 end)
 
