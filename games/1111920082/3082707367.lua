@@ -599,7 +599,7 @@ Teleport:AddButton({
 							v114.D = 100;
 							local u34 = RunService.Stepped:Connect(function()
 								if TrollPlayer.Character:FindFirstChild("HumanoidRootPart") and v109 then
-									v114.Position = ROWizardValues["LocationSelected"]
+									v114.Position = Vector3.new(ROWizardValues["LocationSelected"])
 								end
 							end)
 							wait(6);
