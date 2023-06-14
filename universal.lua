@@ -356,4 +356,3 @@ ThemeManager:ApplyToTab(Tabs["UI Settings"])
 SaveManager:LoadAutoloadConfig()
 
 local EndTime = os.clock() - StartTime
-print("Script took: " .. EndTime)
