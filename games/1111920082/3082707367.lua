@@ -40,7 +40,7 @@ local ROWizardValues = {
 		PlayerToFake = nil;
 		PlayerToBring = nil;
 	},
-	["TeleportTable"] = {
+	["TeleportTable2"] = {
 		["Grand Hall"] = "-6.98583317, 3.26444864, -237.789932, 0.999627113, 3.01348657e-09, -0.0273053069, -2.85575763e-09, 1, 5.81549564e-09, 0.0273053069, -5.73534997e-09, 0.999627113",
 		["Serpents Common Room"] = "345.465912, -58.8441238, 312.809479, 0.996278286, 5.76638399e-08, -0.0861949921, -5.65189175e-08, 1, 1.57233e-08, 0.0861949921, -1.07931344e-08, 0.996278286",
 		["Badgers Common Room"] = "26.4316196, -148.428452, -224.473129, 0.0229754951, 5.64194746e-10, -0.999736011, 2.29062529e-08, 1, 1.09076526e-09, 0.999736011, -2.2925267e-08, 0.0229754951",
@@ -49,6 +49,16 @@ local ROWizardValues = {
 		["Duelling Arena"] = "-748.834106, -107.285576, -444.290924, -0.955545008, 3.22644524e-08, -0.294845313, 4.96480101e-09, 1, 9.33383006e-08, 0.294845313, 8.77250983e-08, -0.955545008",
 		["Azkaban Outside"] = "-938.264771, 973.247803, 2759.89624, -0.89939636, 4.38394565e-09, 0.437134057, 1.21720625e-08, 1, 1.50149884e-08, -0.437134057, 1.88252489e-08, -0.89939636",
 		["Azkaban Inside"] = "-1006.8493, 973.002991, 2906.17676, -0.929947078, -5.77469406e-09, 0.367693365, 2.80315171e-09, 1, 2.27947456e-08, -0.367693365, 2.22286083e-08, -0.929947078"
+	},
+	["TeleportTable"] = {
+		"Grand Hall",
+		"Serpents Common Room",
+		"Badgers Common Room",
+		"Lions Common Room",
+		"Ravens Common Room",
+		"Duelling Arena",
+		"Azkaban Outside",
+		"Azkaban Inside"
 	},
 	["LocationSelected"] = nil,
 	["PlayerToTeleport"] = Player
@@ -538,7 +548,6 @@ Blame:AddButton({
 		end
 	end
 })
-
 end
 
 local Teleport = Tabs.Game:AddRightGroupbox("Teleports")
@@ -551,8 +560,9 @@ Teleport:AddDropdown("TeleportsDropdown",{
 })
 
 Options.TeleportsDropdown:OnChanged(function(str)
+	str = ROWizardValues["TeleportTable2"][str]
 	str = CFrame.new(table.unpack(str:gsub(" ",""):split(",")))
-	ROWizardValues["LocationSelected"] = value
+	ROWizardValues["LocationSelected"] = str
 end)
 
 Teleport:AddButton("TeleportToLocation",{
