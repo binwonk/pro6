@@ -66,7 +66,8 @@ local ROWizardValues = {
 	["PlayerToTeleport"] = Player,
 	["ROWizardOutfits"] = require(Modules:WaitForChild("Outfits")),
 	["ROWizardOutfitsTable"] = {},
-	["StoreGemsTable"] = {}
+	["StoreGemsTable"] = {},
+	["CustomSpellsTable"] = {}
 }
 
 for i,v in next,ReplicatedStorage:WaitForChild("Outfits"):GetChildren() do
@@ -246,6 +247,44 @@ Toggles.PotionAutofarm:OnChanged(function(value)
 end)
 
 local Misc = Tabs.Game:AddRightGroupbox("Misc")
+
+Misc:AddButton({
+	Text = "Unlock all spells",
+	Tooltip = "Unlocks all spells! Doesn't save when you leave game.",
+	Func = function()
+		for _,v in next,getgc(true) do
+			if typeof(v) == "table" and rawget(v,"RPName") then
+				for x = 1,100 do
+					table.insert(v["KnownSpells"], {
+						Unlocked = true,
+						Id = x
+					})
+				end
+				for x, d in pairs(v["KnownSpells"]) do
+					if d.Unlocked == false then
+						d.Unlocked = true
+					end
+				end
+			end
+		end
+	end
+})
+
+Misc:AddButton({
+	Text = "Unlock all unobtainables",
+	Tooltip = "Unlocks all known unobtainables!",
+	Func = function()
+		print("im lazy 1 sec")
+	end
+})
+
+Misc:AddButton({
+	Text = "Custom Spells",
+	Tooltip = "Gives you multiple custom spells!",
+	Func = function()
+		
+	end
+})
 
 Misc:AddInput("BringPlayer", {
 	Numeric = false,
@@ -712,6 +751,19 @@ end)
 
 local Store = Tabs.Game:AddLeftGroupbox("Store")
 
+Store:AddButton({
+	Text = "Free Store",
+	Tooltip = "When pressed, all prices in the store are ALMOST free! (You need 1 gem to purchase.)",
+	Func = function()
+		for i, v in next,getgc(true) do
+			if type(v) == "table" and rawget(v, "Gems") and rawget(v, "Rarity") then
+				v.Gems = 0.00000001
+			end
+		end
+	end
+})
+
+--[[
 Store:AddToggle("FreeStoreToggle",{
 	Text = "Free Store",
 	Tooltip = "When enabled, all prices in the store are ALMOST free! (You need 1 gem to purchase.)",
@@ -735,7 +787,7 @@ Toggles.FreeStoreToggle:OnChanged(function(value)
 		end
 	end
 end)
-
+]]--
 Store:AddDropdown("SelectOutfit",{
 	Text = "Equip Outfit",
 	Tooltip = "Equips an outfit! (some unobtainable outfits in there too)",
