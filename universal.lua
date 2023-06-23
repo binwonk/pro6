@@ -19,7 +19,7 @@ local MD5 = loadstring(game:HttpGet("https://raw.githubusercontent.com/kikito/md
 local LINKVERTISE_ID = 668430
 
 local DONT_RENDER_CONFIRMATION_WINDOW = false
-local CREATOR_DISCORD_SERVER = "https://discord.gg/ccarnEMG95"
+local CREATOR_DISCORD_SERVER = "https://discord.gg/zgHy6TsYcQ"
 local API_HOST = "linkvertise.thisisusedfornothingotherthantohostafewscripts.xyz"
 
 local Solved = Iris.State(false)
@@ -162,7 +162,7 @@ end)
 
 repeat task.wait() until Solved.value
 
-writefile("BinsploitMike","true")
+writefile("BinsploitMike.lua","true")
 
 end
 
