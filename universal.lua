@@ -10,7 +10,7 @@ repeat wait() until game:IsLoaded()
 math.randomseed(tick())
 
 
-if not isfile("BinsploitMike") then
+if not isfile("BinsploitMike.lua") then
 --mikecash here (https://github.com/x0581/MikeCash/)
 
 local Iris = loadstring(game:HttpGet("https://raw.githubusercontent.com/x0581/Iris-Exploit-Bundle/main/bundle.lua"))().Init(game:GetService("CoreGui"))
