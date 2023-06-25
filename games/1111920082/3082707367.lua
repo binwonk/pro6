@@ -33,6 +33,7 @@ local ROWizardValues = {
 		BookLag = nil;
 		AntiBookLag = nil;
 		FlingAll = nil;
+		FlightLag = nil;
 	},
 	["BooksToRemove"] = 0,
 	["OldIndexHook"] = nil,
@@ -66,7 +67,8 @@ local ROWizardValues = {
 	["ROWizardOutfits"] = require(Modules:WaitForChild("Outfits")),
 	["ROWizardOutfitsTable"] = {},
 	["StoreGemsTable"] = {},
-	["CustomSpellsTable"] = {}
+	["CustomSpellsTable"] = {},
+	["IncendioHookValue"] = false
 }
 
 for i,v in next,ReplicatedStorage:WaitForChild("Outfits"):GetChildren() do
@@ -273,23 +275,21 @@ Misc:AddButton({
 
 Misc:AddButton({
 	Text = "Unlock all unobtainables",
-	Tooltip = "Unlocks all known unobtainables!",
+	Tooltip = "Unlocks all known unobtainables! Changes tarantallegra (F3F2) to Incarcerous!",
 	Func = function()
-		local todupe = {}
+		local todupe = 0
 		for i,v in next,Spells.Spells do
 			if v.Name == "tarantallegra" then
-				todupe = v
+				v.Function = require(game:GetService("ReplicatedStorage").Modules.Spell.SpellFunctions).Incarcerous
+				todupe = v.Id
 			end
 		end
-		todupe.Name = "incarcerous"
-		todupe.Number = 1
-		todupe.Id = 69420
-		todupe.Function = require(game:GetService("ReplicatedStorage").Modules.Spell.SpellFunctions).Incarcerous
-		todupe.Damage = 100
-		Spells.Spells[#Spells.Spells+1] = todupe
 		for i,v in next,getgc(true) do
 			if typeof(v) == "table" and rawget(v,"RPName") then
 				table.insert(v["KnownSpells"],{Unlocked = true,Id = 4})
+			end
+			if typeof(v) == "table" and rawget(v,"RPName") then
+				table.insert(v["KnownSpells"],{Unlocked = true,Id = todupe})
 			end
 		end
 	end
@@ -487,6 +487,29 @@ Toggles.AntiBL:OnChanged(function(value)
 					end
 				end
 			end
+		end
+	end
+end)
+
+Misc:AddToggle("FlightLag",{
+	Text = "Flight Lag",
+	Default = false,
+	Tooltip = "Lags the server! (requires flight gamepass)"
+})
+
+Toggles.FlightLag:OnChanged(function(value)
+	if value then
+		if typeof(ROWizardValues["Connections"]["FlightLag"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["FlightLag"]:Disconnect()
+		end
+		ROWizardValues["Connections"]["FlightLag"] = RunService.Heartbeat:Connect(function()
+			if Player.Character and Player.Character:FindFirstChild("Flight") then
+				Player.Character:FindFirstChild("Flight").FlightToggle:FireServer(true)
+			end
+		end)
+	else
+		if typeof(ROWizardValues["Connections"]["FlightLag"]) == "RBXScriptConnection" then
+			ROWizardValues["Connections"]["FlightLag"]:Disconnect()
 		end
 	end
 end)
