@@ -26,6 +26,7 @@ local Effects = workspace:FindFirstChild("Effects")
 local ROWizardValues = {
     ["ModWandToggle"] = false,
 	["AutoConfringo"] = false,
+	["AutoConPlus"] = false
 	["BringPlayerTimeValue"] = 6,
 	["Connections"] = {
 		HoopAutofarm = nil;
@@ -85,8 +86,14 @@ ROWizardValues["OldNamecallHook"] = hookmetamethod(game,"__namecall",function(se
 	if not checkcaller() and tostring(self) == "RemoteEvent" and getnamecallmethod() == "FireServer" then
 		if args[1] == "HandleDamage" and args[2]["Type"] == "Explosive" then
 			if args[2]["SpellName"] == "confringo" and ROWizardValues["AutoConfringo"] then
-				args[2]["SpellName"] = "fiendfyre"
-				return ROWizardValues["OldNamecallHook"](self,unpack(args))
+				if not ROWizardValues["AutoConPlus"] then
+					args[2]["SpellName"] = "fiendfyre"
+					return ROWizardValues["OldNamecallHook"](self,unpack(args))
+				else
+					args[2]["SpellName"] = "fiendfyre"
+					ROWizardValues["OldNamecallHook"](self,unpack(args))
+					return ROWizardValues["OldNamecallHook"](self,unpack(args))
+				end
 			end
 		end
 	end
@@ -129,7 +136,7 @@ end)
 
 local ConfringoDepbox = Combat:AddDependencyBox()
 
-ConfringoDepbox:AddToggle("AutoCon",{
+Combat:AddToggle("AutoCon",{
 	Text = "Auto 40 Damage Confringo",
 	Default = false,
 	Tooltip = "All your confringos will automatically deal 40 damage, rather than the normal 20!"
@@ -137,6 +144,16 @@ ConfringoDepbox:AddToggle("AutoCon",{
 
 Toggles.AutoCon:OnChanged(function(value)
 	ROWizardValues["AutoConfringo"] = value
+end)
+
+ConfringoDepbox:AddToggle("AutoConPlus",{
+	Text = "Auto 80 Damage Confringo",
+	Default = false,
+	Tooltip = "Now your confringos will do even MORE damage!"
+})
+
+Toggles.AutoConPlus:OnChanged(function(value)
+	ROWizardValues["AutoConPlus"] = value
 end)
 
 ConfringoDepbox:SetupDependencies({
