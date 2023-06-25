@@ -134,8 +134,6 @@ Options.KillPlayer:OnChanged(function(value)
 	end
 end)
 
-local ConfringoDepbox = Combat:AddDependencyBox()
-
 Combat:AddToggle("AutoCon",{
 	Text = "Auto 40 Damage Confringo",
 	Default = false,
@@ -145,6 +143,8 @@ Combat:AddToggle("AutoCon",{
 Toggles.AutoCon:OnChanged(function(value)
 	ROWizardValues["AutoConfringo"] = value
 end)
+
+local ConfringoDepbox = Combat:AddDependencyBox()
 
 ConfringoDepbox:SetupDependencies({
 	{Toggles.AutoCon,true}
