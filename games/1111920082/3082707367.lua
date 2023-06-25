@@ -9,7 +9,6 @@ repeat
 	wait()
 until game:IsLoaded()
 
-
 -- SERVICES HERE
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
@@ -162,21 +161,23 @@ Toggles.ModWand:OnChanged(function(value)
 			v.Cooldown = 0
 		end
         ModWandConnection = RunService.Stepped:Connect(function()
-            for i,v in next,Spells.Spells do
-				if v.MaxCharges < 100 then
-					v.MaxCharges = 10000
-				end
-				if v.Charges < 100 then
-					v.Charges = 10000
-				end
-				if v.Safe == false then
-					v.Safe = true
-				end
-				if v.Cooldown > 0 then
-					v.Cooldown = 0
-				end
-				if v.ChargeCooldown > 0.02 then
-					v.ChargeCooldown = 0.01
+			if Player.Character and Player.Character:FindFirstChild("Humanoid") then
+            	for i,v in next,Spells.Spells do
+					if v.MaxCharges < 100 then
+						v.MaxCharges = 10000
+					end
+					if v.Charges < 100 then
+						v.Charges = 10000
+					end
+					if v.Safe == false then
+						v.Safe = true
+					end
+					if v.Cooldown > 0 then
+						v.Cooldown = 0
+					end
+					if v.ChargeCooldown > 0.02 then
+						v.ChargeCooldown = 0.01
+					end
 				end
 			end
         end)
@@ -274,7 +275,23 @@ Misc:AddButton({
 	Text = "Unlock all unobtainables",
 	Tooltip = "Unlocks all known unobtainables!",
 	Func = function()
-		print("im lazy 1 sec")
+		local todupe = {}
+		for i,v in next,Spells.Spells do
+			if v.Name == "tarantallegra" then
+				todupe = v
+			end
+		end
+		todupe.Name = "incarcerous"
+		todupe.Number = 1
+		todupe.Id = 69420
+		todupe.Function = require(game:GetService("ReplicatedStorage").Modules.Spell.SpellFunctions).Incarcerous
+		todupe.Damage = 100
+		Spells.Spells[#Spells.Spells+1] = todupe
+		for i,v in next,getgc(true) do
+			if typeof(v) == "table" and rawget(v,"RPName") then
+				table.insert(v["KnownSpells"],{Unlocked = true,Id = 4})
+			end
+		end
 	end
 })
 
