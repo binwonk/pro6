@@ -146,6 +146,10 @@ Toggles.AutoCon:OnChanged(function(value)
 	ROWizardValues["AutoConfringo"] = value
 end)
 
+ConfringoDepbox:SetupDependencies({
+	{Toggles.AutoCon,true}
+})
+
 ConfringoDepbox:AddToggle("AutoConPlus",{
 	Text = "Auto 80 Damage Confringo",
 	Default = false,
@@ -155,10 +159,6 @@ ConfringoDepbox:AddToggle("AutoConPlus",{
 Toggles.AutoConPlus:OnChanged(function(value)
 	ROWizardValues["AutoConPlus"] = value
 end)
-
-ConfringoDepbox:SetupDependencies({
-	{Toggles.AutoCon,true}
-})
 
 Combat:AddToggle("ModWand", {
     Text = "Mod Wand",
