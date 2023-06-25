@@ -127,7 +127,9 @@ Options.KillPlayer:OnChanged(function(value)
 	end
 end)
 
-Combat:AddToggle("AutoCon",{
+local ConfringoDepbox = Combat:AddDependencyBox()
+
+ConfringoDepbox:AddToggle("AutoCon",{
 	Text = "Auto 40 Damage Confringo",
 	Default = false,
 	Tooltip = "All your confringos will automatically deal 40 damage, rather than the normal 20!"
@@ -136,6 +138,10 @@ Combat:AddToggle("AutoCon",{
 Toggles.AutoCon:OnChanged(function(value)
 	ROWizardValues["AutoConfringo"] = value
 end)
+
+ConfringoDepbox:SetupDependencies({
+	{Toggles.AutoCon,true}
+})
 
 Combat:AddToggle("ModWand", {
     Text = "Mod Wand",
