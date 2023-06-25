@@ -297,7 +297,7 @@ Misc:AddButton({
 
 Misc:AddButton({
 	Text = "Custom Spells",
-	Tooltip = "Gives you multiple custom spells!",
+	Tooltip = "Gives you multiple custom spells! FEATURE IN DEVELOPMENT",
 	Func = function()
 		
 	end
