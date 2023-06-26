@@ -27,6 +27,7 @@ local ROWizardValues = {
     ["ModWandToggle"] = false,
 	["AutoConfringo"] = false,
 	["AutoConPlus"] = false,
+	["AutoConPlusPlus"] = false,
 	["BringPlayerTimeValue"] = 6,
 	["Connections"] = {
 		HoopAutofarm = nil;
@@ -92,6 +93,11 @@ ROWizardValues["OldNamecallHook"] = hookmetamethod(game,"__namecall",function(se
 				else
 					args[2]["SpellName"] = "fiendfyre"
 					ROWizardValues["OldNamecallHook"](self,unpack(args))
+					if ROWizardValues["AutoConPlusPlus"] then
+						ROWizardValues["OldNamecallHook"](self,unpack(args))
+						ROWizardValues["OldNamecallHook"](self,unpack(args))
+						return ROWizardValues["OldNamecallHook"](self,unpack(args))
+					end
 					return ROWizardValues["OldNamecallHook"](self,unpack(args))
 				end
 			end
@@ -156,8 +162,24 @@ Toggles.AutoConPlus:OnChanged(function(value)
 	ROWizardValues["AutoConPlus"] = value
 end)
 
+local ConfringoDepboxPlus = ConfringoDepbox:AddDependencyBox()
+
+ConfringoDepboxPlus:AddToggle("AutoConPlusPlus",{
+	Text = "Auto 160 Damage Confringo",
+	Default = false,
+	Tooltip = "Now your confringos will do EVEN MORE damage! Can we get much higher?"
+})
+
+Toggles.AutoConPlusPlus:OnChanged(function(value)
+	ROWizardValues["AutoConPlusPlus"] = value
+end)
+
 ConfringoDepbox:SetupDependencies({
 	{Toggles.AutoCon, true}
+})
+
+ConfringoDepboxPlus:SetupDependencies({
+	{Toggles.AutoConPlus, true}
 })
 
 Combat:AddToggle("ModWand", {
