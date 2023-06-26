@@ -194,7 +194,7 @@ getgenv().BinsploitValues = {
         }
     },
     ["ChatSpam"] = {
-        Delay = 1;
+        ChatSpamDelay = 1;
     },
     ["ToJoin"] = {
         JobId = game.JobId,
@@ -251,7 +251,7 @@ end)
 
 -- MAIN SCRIPT HERE
 getgenv().V6 = Library:CreateWindow({
-    Title = "Quintessence - Version 0.0.1 - Alpha",
+    Title = "Pioneer - Version 0.0.2 - Alpha",
     Center = true,
     AutoShow = true,
     TabPadding = 8
