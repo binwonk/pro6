@@ -45,14 +45,14 @@ local ROWizardValues = {
 		PlayerToBring = nil;
 	},
 	["TeleportTable2"] = {
-		["Grand Hall"] = "-6.98583317, 3.26444864, -237.789932, 0.999627113, 3.01348657e-09, -0.0273053069, -2.85575763e-09, 1, 5.81549564e-09, 0.0273053069, -5.73534997e-09, 0.999627113",
-		["Serpents Common Room"] = "345.465912, -58.8441238, 312.809479, 0.996278286, 5.76638399e-08, -0.0861949921, -5.65189175e-08, 1, 1.57233e-08, 0.0861949921, -1.07931344e-08, 0.996278286",
-		["Badgers Common Room"] = "26.4316196, -148.428452, -224.473129, 0.0229754951, 5.64194746e-10, -0.999736011, 2.29062529e-08, 1, 1.09076526e-09, 0.999736011, -2.2925267e-08, 0.0229754951",
-		["Lions Common Room"] = "317.076294, 174.698257, -321.223083, 0.873360097, -5.84550985e-09, -0.48707512, -1.30239126e-08, 1, -3.5354045e-08, 0.48707512, 3.72204347e-08, 0.873360097",
-		["Ravens Common Room"] = "872.183838, 234.559326, -147.583115, 0.997416735, 6.57174704e-10, -0.071832329, -1.3341096e-09, 1, -9.37584144e-09, 0.071832329, 9.4474526e-09, 0.997416735",
-		["Duelling Arena"] = "-748.834106, -107.285576, -444.290924, -0.955545008, 3.22644524e-08, -0.294845313, 4.96480101e-09, 1, 9.33383006e-08, 0.294845313, 8.77250983e-08, -0.955545008",
-		["Azkaban Outside"] = "-938.264771, 973.247803, 2759.89624, -0.89939636, 4.38394565e-09, 0.437134057, 1.21720625e-08, 1, 1.50149884e-08, -0.437134057, 1.88252489e-08, -0.89939636",
-		["Azkaban Inside"] = "-1006.8493, 973.002991, 2906.17676, -0.929947078, -5.77469406e-09, 0.367693365, 2.80315171e-09, 1, 2.27947456e-08, -0.367693365, 2.22286083e-08, -0.929947078"
+		["Grand Hall"] = "-6.98583317, 3.26444864, -237.789932",
+		["Serpents Common Room"] = "345.465912, -58.8441238, 312.809479",
+		["Badgers Common Room"] = "26.4316196, -148.428452, -224.473129",
+		["Lions Common Room"] = "317.076294, 174.698257, -321.223083",
+		["Ravens Common Room"] = "872.183838, 234.559326, -147.583115",
+		["Duelling Arena"] = "-748.834106, -107.285576, -444.290924",
+		["Azkaban Outside"] = "-938.264771, 973.247803, 2759.89624",
+		["Azkaban Inside"] = "-1006.8493, 973.002991, 2906.17676"
 	},
 	["TeleportTable"] = {
 		"Grand Hall",
@@ -756,7 +756,7 @@ Options.TeleportsDropdown:OnChanged(function(str)
 	if str ~= "" then
 		str = ROWizardValues["TeleportTable2"][str]
 		if typeof(str) == "string" then
-			str = CFrame.new(table.unpack(str:gsub(" ",""):split(",")))
+			str = Vector3.new(table.unpack(str:gsub(" ",""):split(",")))
 			ROWizardValues["LocationSelected"] = str
 		end
 	else
@@ -770,7 +770,7 @@ Teleport:AddButton({
 	Func = function()
 		if ROWizardValues["PlayerToTeleport"].Character and ROWizardValues["PlayerToTeleport"].Character:FindFirstChild("HumanoidRootPart") then
 			if ROWizardValues["PlayerToTeleport"] == Player then
-				ROWizardValues["PlayerToTeleport"].Character:FindFirstChild("HumanoidRootPart").CFrame = ROWizardValues["LocationSelected"]
+				ROWizardValues["PlayerToTeleport"].Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(ROWizardValues["LocationSelected"])
 			else
 				local KillPlayer = ROWizardValues["PlayerToTeleport"]
 				local TrollPlayer = ROWizardValues["PlayerToTeleport"]
@@ -792,7 +792,7 @@ Teleport:AddButton({
 							v114.D = 100;
 							local u34 = RunService.Stepped:Connect(function()
 								if TrollPlayer.Character:FindFirstChild("HumanoidRootPart") and v109 then
-									v114.Position = Vector3.new(ROWizardValues["LocationSelected"])
+									v114.Position = ROWizardValues["LocationSelected"]
 								end
 							end)
 							wait(6);
