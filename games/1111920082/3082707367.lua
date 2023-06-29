@@ -242,6 +242,16 @@ Toggles.ModWand:OnChanged(function(value)
     end
 end)
 
+Combat:AddButton({
+	Text = "No Safe Zones",
+	Tooltip = "All of your spells can now shoot in safezones!",
+	Func = function()
+		for i,v in next,Spells.Spells do
+			v.Safe = true
+		end
+	end
+})
+
 local Autofarming = Tabs.Game:AddLeftGroupbox("Autofarms")
 
 Autofarming:AddToggle("HoopAutofarm",{
@@ -427,40 +437,42 @@ Options.KillPlayerAlt:OnChanged(function(value)
 	end
 	local KillPlayer = ChaosFunctions.stringToPlayer(value)
 	if KillPlayer.Character and KillPlayer.Character:FindFirstChild("Head") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-		spawn(function()
-			if KillPlayer.Character then
-				local v109 = KillPlayer.Character:FindFirstChild("Head")
-				if v109 then
-				local args = {
-					[1] = "WingardiumToggle",
-					[2] = v109,
-					[3] = true
-				}
-				Remote:FireServer(unpack(args))
-				local v114 = Instance.new("BodyPosition");
-				v114.MaxForce = Vector3.new(math.huge, math.huge, math.huge);
-				v114.Position = v109.Parent:FindFirstChild("HumanoidRootPart").Position
-				v114.Parent = v109;
-				v114.D = 100;
-				local u34 = RunService.Stepped:Connect(function()
-					if v114 and v109 then
-						v114.Position = Vector3.new(0,workspace.FallenPartsDestroyHeight + 5,0)
-					end
-				end)
-				wait(1.5);
-				u34:Disconnect();
-				v114:Destroy();
+		for i = 1,6 do
+			spawn(function()
+				if KillPlayer.Character then
+					local v109 = KillPlayer.Character:FindFirstChild("Head")
 					if v109 then
-						local args = {
-							[1] = "WingardiumToggle",
-							[2] = v109,
-							[3] = false
-						}
-						Remote:FireServer(unpack(args))
+					local args = {
+						[1] = "WingardiumToggle",
+						[2] = v109,
+						[3] = true
+					}
+					Remote:FireServer(unpack(args))
+					local v114 = Instance.new("BodyPosition");
+					v114.MaxForce = Vector3.new(math.huge, math.huge, math.huge);
+					v114.Position = v109.Parent:FindFirstChild("HumanoidRootPart").Position
+					v114.Parent = v109;
+					v114.D = 100;
+					local u34 = RunService.Stepped:Connect(function()
+						if v114 and v109 then
+							v114.Position = Vector3.new(0,workspace.FallenPartsDestroyHeight + 1,0)
+						end
+					end)
+					wait(6);
+					u34:Disconnect();
+					v114:Destroy();
+						if v109 then
+							local args = {
+								[1] = "WingardiumToggle",
+								[2] = v109,
+								[3] = false
+							}
+							Remote:FireServer(unpack(args))
+						end
 					end
 				end
-			end
-		end)
+			end)
+		end
 	end
 end)
 
