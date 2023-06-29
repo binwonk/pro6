@@ -660,6 +660,10 @@ Options.FlingPlayerAlt:OnChanged(function(value)
 	end
 end)
 
+Misc:AddToggle("FlingPlayerToggle",{
+	Text = ""
+})
+
 local Blame = Tabs.Game:AddRightGroupbox("PLACEHOLDER NAME")
 
 Blame:AddInput("FakeUser",{
@@ -836,7 +840,7 @@ end)
 
 local Store = Tabs.Game:AddLeftGroupbox("Store")
 
-Store:AddButton({
+--[[Store:AddButton({
 	Text = "Free Store",
 	Tooltip = "When pressed, all prices in the store are ALMOST free! (You need 1 gem to purchase.)",
 	Func = function()
@@ -847,8 +851,8 @@ Store:AddButton({
 		end
 	end
 })
+]]--
 
---[[
 Store:AddToggle("FreeStoreToggle",{
 	Text = "Free Store",
 	Tooltip = "When enabled, all prices in the store are ALMOST free! (You need 1 gem to purchase.)",
@@ -867,12 +871,15 @@ Toggles.FreeStoreToggle:OnChanged(function(value)
 	else
 		for i, v in next,getgc(true) do
 			if type(v) == "table" and rawget(v, "Gems") and rawget(v, "Rarity") then
-				v.Gems = ROWizardValues["StoreGemsTable"][v.Name]
+				if ROWizardValues["StoreGemsTable"][v.Name] then
+					v.Gems = ROWizardValues["StoreGemsTable"][v.Name]
+				end
 			end
 		end
 	end
 end)
-]]--
+
+
 Store:AddDropdown("SelectOutfit",{
 	Text = "Equip Outfit",
 	Tooltip = "Equips an outfit! (some unobtainable outfits in there too)",
