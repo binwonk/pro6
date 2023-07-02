@@ -52,7 +52,7 @@ JailbreakValues["OldNamecallHook"] = hookmetamethod(game,"__namecall",function(s
 	return JailbreakValues["OldNamecallHook"](self,unpack(args))
 end)
 
-JailbreakValues["JailbreakRemoteHook"] = hookfunction(Remote.FireServer,function(...)
+JailbreakValues["JailbreakRemoteHook"] = hookfunction(Remote.FireServer,function(self,...)
     local args = {...}
 
     if args[1] == JailbreakValues["Remotes"]["FallDamage"] then
@@ -61,7 +61,7 @@ JailbreakValues["JailbreakRemoteHook"] = hookfunction(Remote.FireServer,function
         end
     end
 
-    return JailbreakValues["JailbreakRemoteHook"](...)
+    return JailbreakValues["JailbreakRemoteHook"](self,...)
 end)
 
 --GAME SCRIPT HERE
