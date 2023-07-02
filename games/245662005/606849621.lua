@@ -30,6 +30,7 @@ local JailbreakValues = {
         AutoPunch = nil;
     },
     ["FallDamageValue"] = false,
+    ["RagdollValue"] = false,
     ["AutoPunchToggle"] = false,
 	["OldIndexHook"] = nil,
 	["OldNamecallHook"] = nil,
@@ -37,7 +38,9 @@ local JailbreakValues = {
     ["Remotes"] = {
         Punch = "jkhe0isj",
         Team = "lcoet4e8",
-        FallDamage = "nngy46bk"
+        FallDamage = "nngy46bk",
+        Ragdoll = "nw10zd2b",
+        Unragdoll = "pimu594b"
     }
 }
 
@@ -57,6 +60,11 @@ JailbreakValues["JailbreakRemoteHook"] = hookfunction(Remote.FireServer,function
 
     if args[1] == JailbreakValues["Remotes"]["FallDamage"] then
         if JailbreakValues["FallDamageValue"] then
+            return
+        end
+    end
+    if args[1] == JailbreakValues["Remotes"]["Ragdoll"] then
+        if JailbreakValues["RagdollValue"] then
             return
         end
     end
@@ -96,4 +104,14 @@ General:AddToggle("NoFallDamage",{
 
 Toggles.NoFallDamage:OnChanged(function(value)
     JailbreakValues["FallDamageValue"] = value
+end)
+
+General:AddToggle("NoRagdoll",{
+    Text = "No Ragdoll",
+    Default = false,
+    Tooltip = "Disables ragdolls when enabled!"
+})
+
+Toggles.NoRagdoll:OnChanged(function(value)
+    JailbreakValues["RagdollValue"] = value
 end)
