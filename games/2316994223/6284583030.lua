@@ -61,7 +61,7 @@ Toggles.AutoFreeRewards:OnChanged(function(value)
             while true do
                 if value then
                     for i=1,12 do
-                        Client.Network.Invoke(PSXValues["FreeReward"],i)
+                        Client.Network.Invoke(PSXValues["Remotes"]["FreeReward"],i)
                         task.wait()
                     end
                     wait(2)
