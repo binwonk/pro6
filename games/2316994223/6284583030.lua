@@ -60,7 +60,7 @@ Toggles.AutoFreeRewards:OnChanged(function(value)
         spawn(function()
             while value do
                 for i=1,12 do
-                    Client.Network.Invoke(FreeReward,i)
+                    Client.Network.Invoke(PSXValues["FreeReward"],i)
                 end
                 wait(2)
             end
