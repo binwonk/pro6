@@ -58,11 +58,16 @@ Autofarm:AddToggle("AutoFreeRewards",{
 Toggles.AutoFreeRewards:OnChanged(function(value)
     if value then
         spawn(function()
-            while value do
-                for i=1,12 do
-                    Client.Network.Invoke(PSXValues["FreeReward"],i)
+            while true do
+                if value then
+                    for i=1,12 do
+                        Client.Network.Invoke(PSXValues["FreeReward"],i)
+                        task.wait()
+                    end
+                    wait(2)
+                else
+                    break
                 end
-                wait(2)
             end
         end)
     end
