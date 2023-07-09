@@ -28,6 +28,8 @@ local ROWizardValues = {
 	["AutoConfringo"] = false,
 	["AutoConPlus"] = false,
 	["AutoConPlusPlus"] = false,
+	["HealLuminus"] = false,
+	["InstaKillLuminus"] = false,
 	["BringPlayerTimeValue"] = 6,
 	["Connections"] = {
 		HoopAutofarm = nil;
@@ -101,6 +103,18 @@ ROWizardValues["OldNamecallHook"] = hookmetamethod(game,"__namecall",function(se
 					return ROWizardValues["OldNamecallHook"](self,unpack(args))
 				end
 			end
+		end
+		if args[1] == "SpawnLuminus" then
+			if ROWizardValues["HealLuminus"] then
+				args[4]["Damage"] = -120
+			end
+			if ROWizardValues["InstaKillLuminus"] then
+				args[4]["Damage"] = 40
+				for i = 1,2 do
+					ROWizardValues["OldNamecallHook"](self,unpack(args))
+				end
+			end
+			return ROWizardValues["OldNamecallHook"](self,unpack(args))
 		end
 	end
 	return ROWizardValues["OldNamecallHook"](self,unpack(args))
@@ -181,6 +195,28 @@ ConfringoDepbox:SetupDependencies({
 ConfringoDepboxPlus:SetupDependencies({
 	{Toggles.AutoConPlus, true}
 })
+
+Combat:AddToggle("HealLuminus",{
+	Text = "Heal Luminus",
+	Default = false,
+	Tooltip = "Makes your Luminuses heal players rather than damage them!"
+})
+
+Combat:AddToggle("InstaKillLuminus",{
+	Text = "Instant Kill Luminus",
+	Default = false,
+	Tooltip = "Makes your Luminuses do 120 damage!"
+})
+
+Toggles.HealLuminus:OnChanged(function(value)
+	ROWizardValues["HealLuminus"] = value
+	Toggles.InstaKillLuminus:SetValue(not value)
+end)
+
+Toggles.InstaKillLuminus:OnChanged(function(value)
+	ROWizardValues["InstaKillLuminus"] = value
+	Toggles.HealLuminus:SetValue(not value)
+end)
 
 Combat:AddToggle("ModWand", {
     Text = "Mod Wand",
@@ -356,6 +392,12 @@ Misc:AddButton({
 	Func = function()
 		
 	end
+})
+
+Misc:AddToggle({
+	Text = "Incarcerous all!",
+	Tooltip = "Requires you to have Incarcerous! Use it on someone.",
+	Default = false
 })
 
 Misc:AddInput("BringPlayer", {
@@ -671,10 +713,6 @@ Options.FlingPlayerAlt:OnChanged(function(value)
 		end
 	end
 end)
-
-Misc:AddToggle("FlingPlayerToggle",{
-	Text = ""
-})
 
 local Blame = Tabs.Game:AddRightGroupbox("PLACEHOLDER NAME")
 
