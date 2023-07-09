@@ -110,11 +110,13 @@ ROWizardValues["OldNamecallHook"] = hookmetamethod(game,"__namecall",function(se
 			end
 			if ROWizardValues["InstaKillLuminus"] then
 				args[4]["Damage"] = 40
-				for i = 1,2 do
-					ROWizardValues["OldNamecallHook"](self,unpack(args))
-				end
 			end
 			return ROWizardValues["OldNamecallHook"](self,unpack(args))
+		end
+		if args[1] == "SpawnHelios" and ROWizardValues["MegaHelios"] then
+			for i = 1,10 do
+				ROWizardValues["OldNamecallHook"](self,unpack(args))
+			end
 		end
 	end
 	return ROWizardValues["OldNamecallHook"](self,unpack(args))
@@ -203,9 +205,9 @@ Combat:AddToggle("HealLuminus",{
 })
 
 Combat:AddToggle("InstaKillLuminus",{
-	Text = "Instant Kill Luminus",
+	Text = "40 Damage Luminus",
 	Default = false,
-	Tooltip = "Makes your Luminuses do 120 damage!"
+	Tooltip = "Makes your Luminuses do 40 damage!"
 })
 
 Toggles.HealLuminus:OnChanged(function(value)
