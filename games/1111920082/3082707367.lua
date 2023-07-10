@@ -93,8 +93,9 @@ local ChaosFunctions = loadstring(game:HttpGet("https://raw.githubusercontent.co
 
 ROWizardValues["OldNamecallHook"] = hookmetamethod(game,"__namecall",function(self,...)
 	local args = {...}
-	if not checkcaller() and string.lower(getnamecallmethod()) == "generateguid" then
-		return "binsploit"
+	if not checkcaller() and getnamecallmethod() == "GenerateGUID" then
+		print("success")
+		return ROWizardValues["OldNamecallHook"](self,"binsploit")
 	end
 	if not checkcaller() and tostring(self) == "RemoteEvent" and getnamecallmethod() == "FireServer" then
 		if args[1] == "HandleDamage" and args[2]["Type"] == "Explosive" then
