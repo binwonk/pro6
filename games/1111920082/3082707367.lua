@@ -429,12 +429,6 @@ Misc:AddButton({
 	end
 })
 
-Misc:AddToggle({
-	Text = "Incarcerous all!",
-	Tooltip = "Requires you to have Incarcerous! Use it on someone.",
-	Default = false
-})
-
 Misc:AddInput("BringPlayer", {
 	Numeric = false,
 	Finished = true,
