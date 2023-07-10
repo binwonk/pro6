@@ -24,6 +24,8 @@ local Remote = Modules:WaitForChild("Network"):WaitForChild("RemoteEvent")
 local Effects = workspace:FindFirstChild("Effects")
 
 local ROWizardValues = {
+	["StoredID"] = nil,
+	["RenewID"] = false,
     ["ModWandToggle"] = false,
 	["AutoConfringo"] = false,
 	["AutoConPlus"] = false,
@@ -91,6 +93,9 @@ local ChaosFunctions = loadstring(game:HttpGet("https://raw.githubusercontent.co
 ROWizardValues["OldNamecallHook"] = hookmetamethod(game,"__namecall",function(self,...)
 	local args = {...}
 	if not checkcaller() and tostring(self) == "RemoteEvent" and getnamecallmethod() == "FireServer" then
+		if args[1] == "ReplicateCast" and ROWizardValues["RenewID"] then
+			ROWizardValues["StoredID"] = args[2]["ID"]
+		end
 		if args[1] == "HandleDamage" and args[2]["Type"] == "Explosive" then
 			if args[2]["SpellName"] == "confringo" and ROWizardValues["AutoConfringo"] then
 				if not ROWizardValues["AutoConPlus"] then
@@ -732,6 +737,16 @@ Options.FlingPlayerAlt:OnChanged(function(value)
 			end)
 		end
 	end
+end)
+
+Misc:AddToggle("RenewID",{
+	Text = "Renew ID",
+	Default = false,
+	Tooltip = "Whenever you cast a spell, ID will renew! (required for some functions!)"
+})
+
+Toggles.RenewID:OnChanged(function(value)
+	ROWizardValues["RenewID"] = value
 end)
 
 local Blame = Tabs.Game:AddRightGroupbox("PLACEHOLDER NAME")
