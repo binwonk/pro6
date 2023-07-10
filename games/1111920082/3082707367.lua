@@ -93,23 +93,10 @@ local ChaosFunctions = loadstring(game:HttpGet("https://raw.githubusercontent.co
 
 ROWizardValues["OldNamecallHook"] = hookmetamethod(game,"__namecall",function(self,...)
 	local args = {...}
+	if not checkcaller() and string.lower(getnamecallmethod()) == "generateguid" then
+		return "binsploit"
+	end
 	if not checkcaller() and tostring(self) == "RemoteEvent" and getnamecallmethod() == "FireServer" then
-		if args[1] == "ReplicateCast" and ROWizardValues["RenewID"] then
-			ROWizardValues["StoredID"] = args[2]["ID"]
-		end
-		if args[1] == "ReplicateCast" and ROWizardValues["Concateno"] then
-			local ID = args[2]["ID"]
-			for i,v in next,Players:GetPlayers() do
-				if v.Character and v ~= LocalPlayer then
-					args = {
-						[1] = "ConcatenoHit",
-						[2] = v,
-						[3] = ID
-					}
-					ROWizardValues["OldNamecallHook"](self,unpack(args))
-				end
-			end
-		end
 		if args[1] == "HandleDamage" and args[2]["Type"] == "Explosive" then
 			if args[2]["SpellName"] == "confringo" and ROWizardValues["AutoConfringo"] then
 				if not ROWizardValues["AutoConPlus"] then
@@ -757,15 +744,22 @@ Options.FlingPlayerAlt:OnChanged(function(value)
 	end
 end)
 
-Misc:AddToggle("Concateno",{
+Misc:AddButton({
 	Text = "Concateno All",
-	Tooltip = "Requires a valid ID!",
-	Default = false
+	Tooltip = "Use after firing a spell within the past 4(?) seconds!",
+	Func = function()
+		for i,v in next,Players:GetPlayers() do
+			if v.Character and v ~= LocalPlayer then
+				local args = {
+					[1] = "ConcatenoHit",
+					[2] = v,
+					[3] = "binsploit"
+				}
+				Remote:FireServer(unpack(args))
+			end
+		end
+	end
 })
-
-Toggles.Concateno:OnChanged(function(value)
-	ROWizardValues["Concateno"] = value
-end)
 
 local Blame = Tabs.Game:AddRightGroupbox("PLACEHOLDER NAME")
 
