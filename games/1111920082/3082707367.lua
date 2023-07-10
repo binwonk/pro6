@@ -367,6 +367,16 @@ end)
 
 local Misc = Tabs.Game:AddRightGroupbox("Misc")
 
+Misc:AddToggle("RenewID",{
+	Text = "Renew ID",
+	Default = false,
+	Tooltip = "Whenever you cast a spell, ID will renew! (required for some functions!)"
+})
+
+Toggles.RenewID:OnChanged(function(value)
+	ROWizardValues["RenewID"] = value
+end)
+
 Misc:AddButton({
 	Text = "Unlock all spells",
 	Tooltip = "Unlocks all spells! Doesn't save when you leave game.",
@@ -737,16 +747,6 @@ Options.FlingPlayerAlt:OnChanged(function(value)
 			end)
 		end
 	end
-end)
-
-Misc:AddToggle("RenewID",{
-	Text = "Renew ID",
-	Default = false,
-	Tooltip = "Whenever you cast a spell, ID will renew! (required for some functions!)"
-})
-
-Toggles.RenewID:OnChanged(function(value)
-	ROWizardValues["RenewID"] = value
 end)
 
 local Blame = Tabs.Game:AddRightGroupbox("PLACEHOLDER NAME")
