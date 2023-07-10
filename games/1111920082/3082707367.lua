@@ -99,13 +99,13 @@ ROWizardValues["OldNamecallHook"] = hookmetamethod(game,"__namecall",function(se
 		end
 		if args[1] == "ReplicateCast" and ROWizardValues["Concateno"] then
 			for i,v in next,Players:GetPlayers() do
-				if v.Character then
+				if v.Character and v ~= LocalPlayer then
 					args = {
 						[1] = "ConcatenoHit",
 						[2] = v,
 						[3] = args[2]["ID"]
 					}
-					return ROWizardValues["OldNamecallHook"](self,unpack(args))
+					ROWizardValues["OldNamecallHook"](self,unpack(args))
 				end
 			end
 		end
@@ -763,7 +763,7 @@ Misc:AddToggle("Concateno",{
 })
 
 Toggles.Concateno:OnChanged(function(value)
-	ROWizardValues["Concateno"] = value	
+	ROWizardValues["Concateno"] = value
 end)
 
 local Blame = Tabs.Game:AddRightGroupbox("PLACEHOLDER NAME")
