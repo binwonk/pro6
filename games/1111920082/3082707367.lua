@@ -25,6 +25,7 @@ local Effects = workspace:FindFirstChild("Effects")
 
 local ROWizardValues = {
 	["StoredID"] = nil,
+	["Concateno"] = false,
 	["RenewID"] = false,
     ["ModWandToggle"] = false,
 	["AutoConfringo"] = false,
@@ -95,6 +96,18 @@ ROWizardValues["OldNamecallHook"] = hookmetamethod(game,"__namecall",function(se
 	if not checkcaller() and tostring(self) == "RemoteEvent" and getnamecallmethod() == "FireServer" then
 		if args[1] == "ReplicateCast" and ROWizardValues["RenewID"] then
 			ROWizardValues["StoredID"] = args[2]["ID"]
+		end
+		if args[1] == "ReplicateCast" and ROWizardValues["Concateno"] then
+			for i,v in next,Players:GetPlayers() do
+				if v.Character then
+					args = {
+						[1] = "ConcatenoHit",
+						[2] = v,
+						[3] = args[2]["ID"]
+					}
+					return ROWizardValues["OldNamecallHook"](self,unpack(args))
+				end
+			end
 		end
 		if args[1] == "HandleDamage" and args[2]["Type"] == "Explosive" then
 			if args[2]["SpellName"] == "confringo" and ROWizardValues["AutoConfringo"] then
@@ -743,22 +756,15 @@ Options.FlingPlayerAlt:OnChanged(function(value)
 	end
 end)
 
-Misc:AddButton({
+Misc:AddToggle("Concateno",{
 	Text = "Concateno All",
 	Tooltip = "Requires a valid ID!",
-	Func = function()
-		for i,v in next,Players:GetPlayers() do
-			if v.Character then
-				local args = {
-					[1] = "ConcatenoHit",
-					[2] = v,
-					[3] = ROWizardValues["StoredID"]
-				}
-				Remote:FireServer(unpack(args))
-			end
-		end
-	end
+	Default = false
 })
+
+Toggles.Concateno:OnChanged(function(value)
+	ROWizardValues["Concateno"] = value	
+end)
 
 local Blame = Tabs.Game:AddRightGroupbox("PLACEHOLDER NAME")
 
