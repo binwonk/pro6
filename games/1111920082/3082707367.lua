@@ -95,7 +95,7 @@ ROWizardValues["OldNamecallHook"] = hookmetamethod(game,"__namecall",function(se
 	local args = {...}
 	if not checkcaller() and getnamecallmethod() == "GenerateGUID" then
 		print("success")
-		return ROWizardValues["OldNamecallHook"](self,"binsploit")
+		return "binsploit"
 	end
 	if not checkcaller() and tostring(self) == "RemoteEvent" and getnamecallmethod() == "FireServer" then
 		if args[1] == "HandleDamage" and args[2]["Type"] == "Explosive" then
