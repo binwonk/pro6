@@ -98,6 +98,7 @@ ROWizardValues["OldNamecallHook"] = hookmetamethod(game,"__namecall",function(se
 			ROWizardValues["StoredID"] = args[2]["ID"]
 		end
 		if args[1] == "ReplicateCast" and ROWizardValues["Concateno"] then
+			print(args[2]["ID"])
 			for i,v in next,Players:GetPlayers() do
 				if v.Character and v ~= LocalPlayer then
 					args = {
