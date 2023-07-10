@@ -749,16 +749,13 @@ Misc:AddButton({
 	Text = "Concateno All",
 	Tooltip = "Use after firing a spell within the past 4(?) seconds!",
 	Func = function()
-		for i,v in next,Players:GetPlayers() do
-			if v.Character and v ~= LocalPlayer then
-				local args = {
-					[1] = "ConcatenoHit",
-					[2] = v,
-					[3] = "binsploit"
-				}
-				Remote:FireServer(unpack(args))
-			end
-		end
+		local args = {
+			[1] = "SpawnHelios",
+			[2] = Player.Character.Head.Position,
+			[3] = Vector3.new(0, 1, 0),
+			[4] = "binsploit"
+		}
+		game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
 	end
 })
 
