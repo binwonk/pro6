@@ -238,8 +238,6 @@ Toggles.MegaHelios:OnChanged(function(value)
 	ROWizardValues["MegaHelios"] = value
 end)
 
-Combat:AddDropdown
-
 Combat:AddToggle("ModWand", {
     Text = "Mod Wand",
     Default = false
