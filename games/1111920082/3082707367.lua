@@ -30,6 +30,7 @@ local ROWizardValues = {
 	["AutoConPlusPlus"] = false,
 	["HealLuminus"] = false,
 	["InstaKillLuminus"] = false,
+	["MegaHelios"] = false,
 	["BringPlayerTimeValue"] = 6,
 	["Connections"] = {
 		HoopAutofarm = nil;
@@ -65,6 +66,9 @@ local ROWizardValues = {
 		"Duelling Arena",
 		"Azkaban Outside",
 		"Azkaban Inside"
+	},
+	["MegaHeliosModes"] = {
+		["Default"] = "default"
 	},
 	["LocationSelected"] = nil,
 	["PlayerToTeleport"] = Player,
@@ -212,13 +216,29 @@ Combat:AddToggle("InstaKillLuminus",{
 
 Toggles.HealLuminus:OnChanged(function(value)
 	ROWizardValues["HealLuminus"] = value
-	Toggles.InstaKillLuminus:SetValue(not value)
+	if Toggles.InstaKillLuminus.Value == true then
+		Toggles.InstaKillLuminus:SetValue(false)
+	end
 end)
 
 Toggles.InstaKillLuminus:OnChanged(function(value)
 	ROWizardValues["InstaKillLuminus"] = value
-	Toggles.HealLuminus:SetValue(not value)
+	if Toggles.HealLuminus.Value == true then
+		Toggles.HealLuminus:SetValue(false)
+	end
 end)
+
+Combat:AddToggle("MegaHelios",{
+	Text = "Mega Helios",
+	Default = false,
+	Tooltip = "Makes your helios... mega?"
+})
+
+Toggles.MegaHelios:OnChanged(function(value)
+	ROWizardValues["MegaHelios"] = value
+end)
+
+Combat:AddDropdown
 
 Combat:AddToggle("ModWand", {
     Text = "Mod Wand",
