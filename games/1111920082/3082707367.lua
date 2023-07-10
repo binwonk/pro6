@@ -743,6 +743,23 @@ Options.FlingPlayerAlt:OnChanged(function(value)
 	end
 end)
 
+Misc:AddButton({
+	Text = "Concateno All",
+	Tooltip = "Requires a valid ID!",
+	Func = function()
+		for i,v in next,Players:GetPlayers() do
+			if v.Character then
+				local args = {
+					[1] = "ConcatenoHit",
+					[2] = v,
+					[3] = ROWizardValues["StoredID"]
+				}
+				Remote:FireServer(unpack(args))
+			end
+		end
+	end
+})
+
 local Blame = Tabs.Game:AddRightGroupbox("PLACEHOLDER NAME")
 
 Blame:AddInput("FakeUser",{
