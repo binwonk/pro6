@@ -178,7 +178,7 @@ end)
 
 -- MAIN SCRIPT HERE
 getgenv().V6 = Library:CreateWindow({
-    Title = "Pioneer - Version 0.0.2 - Alpha",
+    Title = "Elysium - Version 0.0.3 - Alpha",
     Center = true,
     AutoShow = true,
     TabPadding = 8
@@ -355,6 +355,19 @@ Options.JumpPower:OnChanged(function(value)
     end
 end)
 
+UniversalLocalPlayer:AddInput("CustomJumpPower", {
+    Text = "JumpPower Textbox",
+    Numeric = true,
+    Finished = true,
+    Tooltip = "Numbers only!",
+    Placeholder = "Custom JumpPower here!"
+})
+
+if Player.Character and Player.Character:FindFirstChildOfClass("Humanoid") then
+    Options.JumpPower:SetValue(value)
+    Player.Character:FindFirstChildOfClass("Humanoid").JumpPower = value
+end
+
 UniversalLocalPlayer:AddInput("GotoPlayer",{
     Text = "Teleport To Player",
     Numeric = false,
@@ -370,7 +383,7 @@ Options.GotoPlayer:OnChanged(function(value)
     value = ChaosFunctions.stringToPlayer(value)
     if value then
         if value.Character and value.Character:FindFirstChild("HumanoidRootPart") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-            Player.Character:FindFirstChild("HumanoidRootPart").CFrame = value.Character:FindFirstChild("HumanoidRootPart").Position
+            Player.Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(value.Character:FindFirstChild("HumanoidRootPart").Position)
         end
     end
 end)
