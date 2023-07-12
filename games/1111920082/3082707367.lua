@@ -24,8 +24,6 @@ local Remote = Modules:WaitForChild("Network"):WaitForChild("RemoteEvent")
 local Effects = workspace:FindFirstChild("Effects")
 
 local ROWizardValues = {
-	["StoredID"] = nil,
-	["Concateno"] = false,
     ["ModWandToggle"] = false,
 	["AutoConfringo"] = false,
 	["AutoConPlus"] = false,
