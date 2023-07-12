@@ -363,10 +363,12 @@ UniversalLocalPlayer:AddInput("CustomJumpPower", {
     Placeholder = "Custom JumpPower here!"
 })
 
-if Player.Character and Player.Character:FindFirstChildOfClass("Humanoid") then
-    Options.JumpPower:SetValue(value)
-    Player.Character:FindFirstChildOfClass("Humanoid").JumpPower = value
-end
+Options.CustomJumpPower:OnChanged(function(value)
+    if Player.Character and Player.Character:FindFirstChildOfClass("Humanoid") then
+        Options.JumpPower:SetValue(value)
+        Player.Character:FindFirstChildOfClass("Humanoid").JumpPower = value
+    end
+end)
 
 UniversalLocalPlayer:AddInput("GotoPlayer",{
     Text = "Teleport To Player",
