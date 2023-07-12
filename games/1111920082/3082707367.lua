@@ -79,7 +79,35 @@ local ROWizardValues = {
 	["ROWizardOutfitsTable"] = {},
 	["StoreGemsTable"] = {},
 	["CustomSpellsTable"] = {},
-	["IncendioHookValue"] = false
+	["IncendioHookValue"] = false,
+	["OneShot"] = false,
+	["OneShotInclusions"] = {
+		"SpawnGeminioClone",
+		"HandleDamage",
+		"DiffindoHit",
+		"FulgurHit",
+		"BublioHit",
+		"CarceremHit",
+		"FiendfyreImpact",
+		"GlaciaMaximaHit",
+		"RictumsempraHit",
+		"SpawnLuminus",
+		"GladioHit",
+		"ExpelliarmusHit",
+		"EpiskeyHit",
+		"GlaciusHit",
+		"WallHit",
+		"ElectricaHit",
+		"LevicorpusHit",
+		"SectumsempraCut",
+		"ConcatenoHit",
+		"LegilimensHit",
+		"TarantallegraHit",
+		"AccioHit",
+		"DepulsoHit",
+		"SpawnBombardo",
+
+	}
 }
 
 for i,v in next,ReplicatedStorage:WaitForChild("Outfits"):GetChildren() do
@@ -98,6 +126,14 @@ ROWizardValues["OldNamecallHook"] = hookmetamethod(game,"__namecall",function(se
 		return "binsploit"
 	end
 	if not checkcaller() and tostring(self) == "RemoteEvent" and getnamecallmethod() == "FireServer" then
+		if ROWizardValues["OneShot"] then
+			if table.find(ROWizardValues["OneShotInclusions"],tostring(args[1])) then
+				for i = 1,5 do
+					ROWizardValues["OldNamecallHook"](self,unpack(args))
+				end
+				return ROWizardValues["OldNamecallHook"](self,unpack(args))
+			end
+		end
 		if args[1] == "HandleDamage" and args[2]["Type"] == "Explosive" then
 			if args[2]["SpellName"] == "confringo" and ROWizardValues["AutoConfringo"] then
 				if not ROWizardValues["AutoConPlus"] then
@@ -314,6 +350,17 @@ Combat:AddButton({
 		end
 	end
 })
+
+Combat:AddToggle("OneShot",{
+	Text = "One-Shot",
+	Tooltip = "All of your spells will repeat 6 times when fired! Can kill with one shot with some spells!",
+	Default = false
+})
+
+Toggles.OneShot:OnChanged(function(value)
+	ROWizardValues["OneShot"] = value
+end)
+
 
 local Autofarming = Tabs.Game:AddLeftGroupbox("Autofarms")
 
@@ -746,16 +793,66 @@ Options.FlingPlayerAlt:OnChanged(function(value)
 end)
 
 Misc:AddButton({
-	Text = "Concateno All",
-	Tooltip = "Use after firing a spell within the past 4(?) seconds!",
+	Text = "Legilimens All",
+	Tooltip = "(All players that have been streamed in) Use after firing a spell within the past 4(?) seconds!",
 	Func = function()
-		local args = {
-			[1] = "SpawnHelios",
-			[2] = Player.Character.Head.Position,
-			[3] = Vector3.new(0, 1, 0),
-			[4] = "binsploit"
-		}
-		game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+		for i,v in pairs(game:GetService("Players"):GetPlayers()) do
+			if v.Character and v ~= Player then
+			local args = {
+				[1] = "LegilimensHit",
+				[2] = v.Character,
+				[3] = "binsploit"
+			}
+			game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+			wait()
+			end
+		end
+	end
+})
+
+Misc:AddButton({
+	Text = "Levicorpus All",
+	Tooltip = "(All players that have been streamed in) Use after firing a spell within the past 4(?) seconds!",
+	Func = function()
+		for i,v in pairs(game:GetService("Players"):GetPlayers()) do
+			if v.Character and v ~= Player then
+			local args = {
+				[1] = "LevicorpusHit",
+				[2] = v.Character,
+				[3] = "binsploit"
+			}
+			game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+			end
+		end
+	end
+})
+
+Misc:AddButton({
+	Text = "Levi Legi All",
+	Tooltip = "(All players that have been streamed in) Use after firing a spell within the past 4(?) seconds!",
+	Func = function()
+		for i,v in pairs(game:GetService("Players"):GetPlayers()) do
+			if v.Character and v ~= Player then
+			local args = {
+				[1] = "LevicorpusHit",
+				[2] = v.Character,
+				[3] = "binsploit"
+			}
+			game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+			end
+		end
+		wait(0.5)
+		for i,v in pairs(game:GetService("Players"):GetPlayers()) do
+			if v.Character and v ~= Player then
+			local args = {
+				[1] = "LegilimensHit",
+				[2] = v.Character,
+				[3] = "binsploit"
+			}
+			game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+			wait()
+			end
+		end
 	end
 })
 
