@@ -26,7 +26,6 @@ local Effects = workspace:FindFirstChild("Effects")
 local ROWizardValues = {
 	["StoredID"] = nil,
 	["Concateno"] = false,
-	["RenewID"] = false,
     ["ModWandToggle"] = false,
 	["AutoConfringo"] = false,
 	["AutoConPlus"] = false,
@@ -105,9 +104,9 @@ local ROWizardValues = {
 		"TarantallegraHit",
 		"AccioHit",
 		"DepulsoHit",
-		"SpawnBombardo",
-
-	}
+		"SpawnBombardo"
+	},
+	["AutoKillTable"] = {}
 }
 
 for i,v in next,ReplicatedStorage:WaitForChild("Outfits"):GetChildren() do
@@ -415,16 +414,6 @@ Toggles.PotionAutofarm:OnChanged(function(value)
 end)
 
 local Misc = Tabs.Game:AddRightGroupbox("Misc")
-
-Misc:AddToggle("RenewID",{
-	Text = "Renew ID",
-	Default = false,
-	Tooltip = "Whenever you cast a spell, ID will renew! (required for some functions!)"
-})
-
-Toggles.RenewID:OnChanged(function(value)
-	ROWizardValues["RenewID"] = value
-end)
 
 Misc:AddButton({
 	Text = "Unlock all spells",
