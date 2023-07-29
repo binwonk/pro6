@@ -862,6 +862,33 @@ Misc:AddButton({
 	end
 })
 
+Misc:AddInput("GlaciusOne",{
+	Numeric = false,
+	Finished = true,
+	Text = "Glacius Player",
+	Tooltip = "Use after firing a spell in the past 4(?) seconds!",
+	Placeholder = "Player name here!"
+})
+
+Options.GlaciusOne:OnChanged(function(value)
+	if tostring(value) == "" then
+        return
+    end
+	local FakeBring = ChaosFunctions.stringToPlayer(value)
+	if FakeBring then
+		if FakeBring.Character and FakeBring ~= Player then
+			local args = {
+				[1] = "GlaciusHit",
+				[2] = FakeBring.Character.Head,
+				[3] = Vector3.new(208.19619750976562, 5.120060920715332, 61.661712646484375),
+				[4] = Vector3.new(-0.5067042112350464, -0.00975007563829422, 0.8620648980140686),
+				[5] = "binsploit"
+			}
+			game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+			end
+	end
+end)
+
 local Blame = Tabs.Game:AddRightGroupbox("PLACEHOLDER NAME")
 
 Blame:AddInput("FakeUser",{
