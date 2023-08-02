@@ -413,6 +413,31 @@ end)
 
 local Misc = Tabs.Game:AddRightGroupbox("Misc")
 
+Misc:AddDropdown("HouseChange",{
+	Values = {"Ravens", "Badgers", "Lions", "Serpents"},
+	Text = "Change House",
+	Tooltip = "changes your house",
+	AllowNull = true
+})
+
+Options.HouseChange:OnChanged(function(str)
+	local CFRAME_SET = nil;
+	if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+		CFRAME_SET = Player.Character.HumanoidRootPart.CFrame
+	end
+	local args = {
+		[1] = "ChangeHouse",
+		[2] = str
+	}
+	Remote:FireServer(unpack(args))
+	repeat
+		wait()
+	until Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+	if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") and typeof(CFRAME_SET) == "CFrame" then
+		Player.Character.HumanoidRootPart.CFrame = CFRAME_SET
+	end
+end)
+
 Misc:AddButton({
 	Text = "Unlock all spells",
 	Tooltip = "Unlocks all spells! Doesn't save when you leave game.",
@@ -702,7 +727,7 @@ Toggles.FlingAll:OnChanged(function(value)
 							["SpellName"] = "levicorpus"
 						}
 					}
-					game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+					Remote:FireServer(unpack(args))
 				end
 			end
 		end)
@@ -790,7 +815,7 @@ Misc:AddButton({
 				[2] = v.Character,
 				[3] = "binsploit"
 			}
-			game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+			Remote:FireServer(unpack(args))
 			wait()
 			end
 		end
@@ -808,7 +833,7 @@ Misc:AddButton({
 				[2] = v.Character,
 				[3] = "binsploit"
 			}
-			game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+			Remote:FireServer(unpack(args))
 			end
 		end
 	end
@@ -825,7 +850,7 @@ Misc:AddButton({
 				[2] = v.Character,
 				[3] = "binsploit"
 			}
-			game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+			Remote:FireServer(unpack(args))
 			end
 		end
 		wait(0.5)
@@ -836,7 +861,7 @@ Misc:AddButton({
 				[2] = v.Character,
 				[3] = "binsploit"
 			}
-			game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+			Remote:FireServer(unpack(args))
 			wait()
 			end
 		end
@@ -856,7 +881,7 @@ Misc:AddButton({
 				[4] = Vector3.new(-0.5067042112350464, -0.00975007563829422, 0.8620648980140686),
 				[5] = "binsploit"
 			}
-			game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
+			Remote:FireServer(unpack(args))
 			end
 		end
 	end
@@ -884,8 +909,8 @@ Options.GlaciusOne:OnChanged(function(value)
 				[4] = Vector3.new(-0.5067042112350464, -0.00975007563829422, 0.8620648980140686),
 				[5] = "binsploit"
 			}
-			game:GetService("ReplicatedStorage").Modules.Network.RemoteEvent:FireServer(unpack(args))
-			end
+			Remote:FireServer(unpack(args))
+		end
 	end
 end)
 
