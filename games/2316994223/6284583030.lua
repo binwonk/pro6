@@ -162,11 +162,11 @@ Autofarm:AddInput("AutoDeleteToggle",{
     Default = false,
     Tooltip = "Automatically deletes pets below specified power level!"
 })
-
+--[[
 Toggles.AutoDeleteToggle:OnChanged(function(value)
     if value then
         
     else
 
     end
-end)
+end)]]--
