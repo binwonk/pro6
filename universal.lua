@@ -1,3 +1,5 @@
+-- plz dont skid from my skidded code
+
 local StartTime = os.clock()
 
 local ScriptVersion = "0.0.1"
@@ -9,98 +11,14 @@ repeat wait() until game:IsLoaded()
 
 math.randomseed(tick())
 
-
-if not isfile("BinsploitMike2.lua") then
---mikecash here (https://github.com/x0581/MikeCash/)
-
-local Title = "MikeCash - Please visit the website."
-
-local API_HOST = "s1.wayauth.com" -- s1.wayauth.com, s2.wayauth.com, s3.wayauth.com, s4.wayauth.com, s5.wayauth.com
-local LINKVERTISE_ID = 668430 -- Change me
-local LINKVERTISE_COUNT = 1 -- Change me
-local TOKEN_EXPIRE_TIME = 0 -- Seconds
-
-local Task = {}
-Task.__index = Task
-
-local HttpService = game:GetService("HttpService")
-local SHA2 = loadstring(game:HttpGet("https://raw.githubusercontent.com/Egor-Skriptunoff/pure_lua_SHA/master/sha2.lua"))()
-local Iris = loadstring(game:HttpGet("https://raw.githubusercontent.com/x0581/Iris-Exploit-Bundle/main/bundle.lua"))().Init(game.CoreGui)
-
-function Task.new(API_HOST, LinkvertiseID, LinkCount, TokenExpireTime)
-    local nTask = {}
-
-    nTask.API_HOST = API_HOST or "s1.wayauth.com"
-    nTask.LinkvertiseID = LinkvertiseID or 12345
-    nTask.LinkCount = LinkCount or 1
-    nTask.Validator = tostring(math.random() + math.random(1, 100000) + Random.new():NextNumber())
-    nTask.TokenExpireTime = TokenExpireTime or 0
-
-    return setmetatable(nTask, Task)
-end
-
-function Task:create()
-    local URLBase = "http://%s/v2/create/%s/%s/%s"
-    local URL = URLBase:format(self.API_HOST, self.LinkvertiseID, self.Validator, self.LinkCount)
-    self.task = HttpService:JSONDecode(game:HttpGet(URL))
-    return self.task
-end
-
-function Task:verify()
-    local URLBase = "http://%s/v2/verify/%s/%s/%s"
-    local URL = URLBase:format(self.API_HOST, self.task.id, self.Validator, self.TokenExpireTime)
-    local Response = HttpService:JSONDecode(game:HttpGet(URL))
-    self.data = Response
-    if Response.success then
-        if SHA2.sha256(self.Validator):upper() == Response.validator:upper() then
-            return true
-        end
-    end
-    return false
-end
-
-function Task:copyURL()
-    local URLBase = "http://%s/v2/wait/%s"
-    local URL = URLBase:format(self.API_HOST, self.task.id)
-    return setclipboard(URL)
-end
-
-local nTask = Task.new(API_HOST, LINKVERTISE_ID, LINKVERTISE_COUNT, TOKEN_EXPIRE_TIME); nTask:create()
-local Verified = false
-
-Iris:Connect(function()
-    if not Verified then
-        Iris.Window({Title, [Iris.Args.Window.NoClose] = true, [Iris.Args.Window.NoResize] = true, [Iris.Args.Window.NoScrollbar] = true, [Iris.Args.Window.NoCollapse] = true}, {size = Iris.State(Vector2.new(375, 60))}) do
-            Iris.SameLine() do
-                if Iris.Button({"I have visited the website."}).clicked then
-                    task.spawn(function()
-                        Verified = nTask:verify()
-                    end)
-                end
-                if Iris.Button({"Copy Website"}).clicked then
-                    nTask:copyURL()
-                end
-                Iris.End()
-            end
-            Iris.End()
-        end
-    end
-end)
-
-repeat task.wait() until Verified
-
-writefile("BinsploitMike2.lua","true")
-
-end
-
---mikecash end, script can start now!
-
 -- SERVICES HERE
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local TeleportService = game:GetService("TeleportService")
 local RunService = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ChatSpyTable = {["OnMessageDoneFiltering"] = ReplicatedStorage:WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("OnMessageDoneFiltering"), ["SayMessageRequest"] = ReplicatedStorage:WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest")}
 
 -- LOCAL VARIABLES HERE
 local Player = Players.LocalPlayer
@@ -122,13 +40,15 @@ getgenv().BinsploitValues = {
     },
     ["ChatSpam"] = {
         ChatSpamDelay = 1;
+        ChatSpamMessage = "";
+        ChatSpamEnabled = false;
     },
     ["ToJoin"] = {
         JobId = game.JobId,
         PlaceId = game.PlaceId
     },
     ["AutoRejoin"] = nil,
-    ["ChatSpy"] = nil;
+    ["ChatSpy"] = false;
 }
 
 getgenv().BinsploitNotify = function(Title,Text,Time,Prompt,PromptY,PromptN)
@@ -370,6 +290,8 @@ Options.CustomJumpPower:OnChanged(function(value)
     end
 end)
 
+Options.CustomJumpPower:SetValue(50)
+
 UniversalLocalPlayer:AddInput("GotoPlayer",{
     Text = "Teleport To Player",
     Numeric = false,
@@ -417,19 +339,33 @@ Options.ChatSpamDelay:OnChanged(function(value)
     BinsploitValues["ChatSpam"]["ChatSpamDelay"] = value
 end)
 
-local UniversalChatSpy = Tabs.Universal:AddRightGroupbox("ChatSpy")
-
-UniversalChatSpy:AddToggle("CSEnabled",{
-    Text = "ChatSpy Enabled",
-    Default = false,
-    Tooltip = "Disables/Enables chatspy!"
+UniversalChatSpam:AddInput("ChatSpamInput",{
+    Text = "ChatSpam Message",
+    Numeric = false,
+    Finished = true,
+    Tooltip = "Enter the message to spam here!",
+    Placeholder = "Enter message here!"
 })
 
-Toggles.CSEnabled:OnChanged(function(value)
-    if value then
-        
-    else
+Options.ChatSpamInput:OnChanged(function(value)
+    if value ~= "" or value ~= nil then
+        BinsploitValues["ChatSpam"]["ChatSpamMessage"] = tostring(value)
+    end
+end)
 
+UniversalChatSpam:AddToggle("ChatSpamToggle",{
+    Text = "ChatSpam Toggle",
+    Tooltip = "Enable/Disable chat spam!",
+    Default = false
+})
+
+Toggles.ChatSpamToggle:OnChanged(function(value)
+    BinsploitValues["ChatSpam"]["ChatSpamToggle"] = value
+    if BinsploitValues["ChatSpam"]["ChatSpamToggle"] then
+        while BinsploitValues["ChatSpam"]["ChatSpamToggle"] do
+            ChatSpyTable["SayMessageRequest"]:FireServer(BinsploitValues["ChatSpam"]["ChatSpamMessage"],"all")
+            wait(BinsploitValues["ChatSpam"]["ChatSpamDelay"])
+        end
     end
 end)
 
